@@ -14,7 +14,6 @@ export default async function EmployerDashboard() {
     .eq('id', user.id)
     .single()
 
-  // Pending approval screen
   if (!employer?.approved) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-4"

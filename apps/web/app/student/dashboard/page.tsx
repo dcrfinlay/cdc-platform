@@ -23,10 +23,7 @@ export default async function StudentDashboard() {
             {profile?.full_name ?? user.email}
           </span>
           <form action={signOut}>
-            <button
-              type="submit"
-              className="text-[12px] text-[#185FA5] hover:underline"
-            >
+            <button type="submit" className="text-[12px] text-[#185FA5] hover:underline">
               Sign out
             </button>
           </form>

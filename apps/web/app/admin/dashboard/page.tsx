@@ -11,7 +11,6 @@ export default async function AdminDashboard() {
 
   const admin = createAdminClient()
 
-  // Quick stats for admin overview
   const [{ count: totalUsers }, { count: pendingEmployers }] = await Promise.all([
     admin.from('profiles').select('*', { count: 'exact', head: true }),
     admin.from('employers').select('*', { count: 'exact', head: true }).eq('approved', false),
