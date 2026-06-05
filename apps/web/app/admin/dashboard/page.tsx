@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import { signOut } from '@/features/auth/actions/sign-out'
+import { NavLogo } from '@/components/nav-logo'
 
 export default async function AdminDashboard() {
   const supabase = await createClient()
@@ -19,7 +20,7 @@ export default async function AdminDashboard() {
   return (
     <div className="min-h-screen" style={{ background: 'var(--surface)' }}>
       <nav className="bg-white border-b border-[#e5e4df] px-7 py-3 flex items-center justify-between">
-        <div className="text-[14px] font-bold">Career Centre — Admin</div>
+        <NavLogo />
         <form action={signOut}>
           <button type="submit" className="text-[12px] text-[#185FA5] hover:underline">
             Sign out

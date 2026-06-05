@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { signOut } from '@/features/auth/actions/sign-out'
+import { NavLogo } from '@/components/nav-logo'
 
 export default async function EmployerDashboard() {
   const supabase = await createClient()
@@ -40,7 +41,7 @@ export default async function EmployerDashboard() {
   return (
     <div className="min-h-screen" style={{ background: 'var(--surface)' }}>
       <nav className="bg-white border-b border-[#e5e4df] px-7 py-3 flex items-center justify-between">
-        <div className="text-[14px] font-bold">Career Centre</div>
+        <NavLogo />
         <div className="flex items-center gap-4">
           <span className="text-[12.5px] text-[#666]">{employer.company_name}</span>
           <form action={signOut}>

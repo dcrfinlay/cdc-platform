@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { signOut } from '@/features/auth/actions/sign-out'
+import { NavLogo } from '@/components/nav-logo'
 
 export default async function StaffDashboard() {
   const supabase = await createClient()
@@ -17,7 +18,7 @@ export default async function StaffDashboard() {
   return (
     <div className="min-h-screen" style={{ background: 'var(--surface)' }}>
       <nav className="bg-white border-b border-[#e5e4df] px-7 py-3 flex items-center justify-between">
-        <div className="text-[14px] font-bold">Career Centre — Staff</div>
+        <NavLogo />
         <div className="flex items-center gap-4">
           <span className="text-[12.5px] text-[#666]">{profile?.full_name ?? user.email}</span>
           <form action={signOut}>
