@@ -11,5 +11,6 @@ export default async function RootPage() {
     redirect(getRoleDashboard(role))
   }
 
-  redirect('/login')
+  // Unauthenticated — show public homepage
+  redirect('/home')
 }

@@ -4,7 +4,7 @@ import type { Database } from '@/lib/types/database.types'
 import { getRoleDashboard } from '@/lib/utils'
 
 // Routes accessible without a session
-const PUBLIC_PATHS = ['/login', '/signup', '/magic-link', '/forgot-password', '/reset-password', '/auth']
+const PUBLIC_PATHS = ['/home', '/login', '/signup', '/magic-link', '/forgot-password', '/reset-password', '/auth']
 
 // Prefix → roles that may access it
 const ROLE_PREFIXES: Array<{ prefix: string; roles: string[] }> = [
