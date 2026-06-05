@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
+import { notify } from '@/features/notifications/lib/notify'
 
 export async function approveEmployer(employerId: string, approve: boolean) {
   const supabase = await createClient()
@@ -28,6 +29,17 @@ export async function approveEmployer(employerId: string, approve: boolean) {
     target_table: 'employers',
     target_id:    employerId,
   })
+
+  // Notify employer
+  if (approve) {
+    await notify({
+      userId: employerId,
+      type:   'employer_approved',
+      title:  'Your employer account has been approved',
+      body:   'You can now post jobs and internships on the Career Centre portal.',
+      link:   '/employer/dashboard',
+    })
+  }
 
   revalidatePath('/admin/employers')
   return { success: true }

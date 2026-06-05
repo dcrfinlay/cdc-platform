@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { signOut } from '@/features/auth/actions/sign-out'
 import { NavLogo } from '@/components/nav-logo'
+import { NotificationBell } from '@/features/notifications/components/notification-bell'
 
 const ICON_MAP: Record<string, string> = {
   info: 'ℹ', briefcase: '💼', clock: '⏰', star: '⭐', bell: '🔔', users: '👥',
@@ -45,7 +46,8 @@ export default async function StudentDashboard() {
     <div className="min-h-screen" style={{ background: 'var(--surface)' }}>
       <nav className="bg-white border-b border-[#e5e4df] px-7 py-3 flex items-center justify-between">
         <NavLogo />
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
+          <NotificationBell userId={user.id} />
           <span className="text-[12.5px] text-[#666]">{profile?.full_name ?? user.email}</span>
           <form action={signOut}>
             <button type="submit" className="text-[12px] text-[#185FA5] hover:underline">Sign out</button>

@@ -4,9 +4,9 @@ import { useActionState, useState } from 'react'
 import Link from 'next/link'
 import { signUp, type SignUpState } from '@/features/auth/actions/sign-up'
 
-export function SignUpForm() {
+export function SignUpForm({ defaultRole = 'student' }: { defaultRole?: 'student' | 'employer' }) {
   const [state, action, pending] = useActionState<SignUpState, FormData>(signUp, {})
-  const [role, setRole] = useState<'student' | 'employer'>('student')
+  const [role, setRole] = useState<'student' | 'employer'>(defaultRole)
 
   if (state.success) {
     return (

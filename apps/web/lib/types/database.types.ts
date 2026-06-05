@@ -3,6 +3,13 @@ export type UserRole = 'student' | 'employer' | 'staff' | 'admin'
 export type EventType = 'workshop' | 'speaker' | 'career_fair' | 'webinar' | 'other'
 
 export type BookingStatus    = 'pending' | 'confirmed' | 'cancelled' | 'completed'
+export type NotificationType =
+  | 'letter_submitted' | 'letter_under_review' | 'letter_approved'
+  | 'letter_rejected'  | 'letter_collected'
+  | 'application_reviewed' | 'application_shortlisted'
+  | 'application_rejected' | 'application_hired'
+  | 'employer_approved' | 'booking_confirmed' | 'booking_cancelled'
+  | 'event_registered'  | 'general'
 export type JobType          = 'job' | 'internship'
 export type JobStatus        = 'draft' | 'published' | 'closed'
 export type ApplicationStatus = 'submitted' | 'reviewed' | 'shortlisted' | 'rejected' | 'hired'
@@ -378,6 +385,30 @@ export interface Database {
         }
       }
     }
+      notifications: {
+        Row: {
+          id: string
+          user_id: string
+          type: NotificationType
+          title: string
+          body: string | null
+          link: string | null
+          is_read: boolean
+          created_at: string
+        }
+        Insert: {
+          user_id: string
+          type?: NotificationType
+          title: string
+          body?: string | null
+          link?: string | null
+          is_read?: boolean
+        }
+        Update: {
+          is_read?: boolean
+        }
+      }
+    }
     Enums: {
       user_role: UserRole
       letter_status: LetterStatus
@@ -386,6 +417,7 @@ export interface Database {
       job_status: JobStatus
       application_status: ApplicationStatus
       booking_status: BookingStatus
+      notification_type: NotificationType
     }
   }
 }
