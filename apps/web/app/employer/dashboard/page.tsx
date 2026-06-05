@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { signOut } from '@/features/auth/actions/sign-out'
 import { NavLogo } from '@/components/nav-logo'
+import { NotificationBell } from '@/features/notifications/components/notification-bell'
 
 export default async function EmployerDashboard() {
   const supabase = await createClient()
@@ -43,12 +44,13 @@ export default async function EmployerDashboard() {
     <div className="min-h-screen" style={{ background: 'var(--surface)' }}>
       <nav className="bg-white border-b border-[#e5e4df] px-7 py-3 flex items-center justify-between">
         <NavLogo />
-        <div className="flex items-center gap-4">
-          <span className="text-[12.5px] text-[#666]">{employer.company_name}</span>
+        <div className="flex items-center gap-3">
+          <NotificationBell userId={user.id} />
+          <Link href="/employer/profile" className="text-[12.5px] text-[#666] hover:text-[#185FA5]">
+            {employer.company_name}
+          </Link>
           <form action={signOut}>
-            <button type="submit" className="text-[12px] text-[#185FA5] hover:underline">
-              Sign out
-            </button>
+            <button type="submit" className="text-[12px] text-[#185FA5] hover:underline">Sign out</button>
           </form>
         </div>
       </nav>
@@ -65,6 +67,18 @@ export default async function EmployerDashboard() {
             <div className="w-8 h-8 rounded-lg bg-[#E1F5EE] flex items-center justify-center mb-3 text-lg">💼</div>
             <div className="text-[14px] font-bold mb-1 group-hover:text-[#0F6E56] transition-colors">My job postings</div>
             <div className="text-[12px] text-[#888]">Post jobs and internships, manage applications.</div>
+          </Link>
+          <Link href="/employer/notifications"
+            className="bg-white border border-[#e5e4df] rounded-xl p-5 hover:border-[#aaa] transition-colors group">
+            <div className="w-8 h-8 rounded-lg bg-[#E6F1FB] flex items-center justify-center mb-3 text-lg">🔔</div>
+            <div className="text-[14px] font-bold mb-1 group-hover:text-[#185FA5] transition-colors">Notifications</div>
+            <div className="text-[12px] text-[#888]">View updates from the Career Centre.</div>
+          </Link>
+          <Link href="/employer/profile"
+            className="bg-white border border-[#e5e4df] rounded-xl p-5 hover:border-[#aaa] transition-colors group">
+            <div className="w-8 h-8 rounded-lg bg-[#f0efe9] flex items-center justify-center mb-3 text-lg">🏢</div>
+            <div className="text-[14px] font-bold mb-1 group-hover:text-[#185FA5] transition-colors">Company profile</div>
+            <div className="text-[12px] text-[#888]">Update your company details and contact info.</div>
           </Link>
         </div>
       </div>

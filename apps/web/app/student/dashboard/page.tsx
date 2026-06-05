@@ -23,6 +23,7 @@ const QUICK_LINKS = [
   { href: '/student/jobs',                title: 'Jobs & internships',        desc: 'Browse open positions from partner employers.',            color: '#993C1D', bg: '#FAECE7', icon: '💼' },
   { href: '/student/resume',              title: 'My CV',                     desc: 'Upload your CV and control employer visibility.',          color: '#888',    bg: '#f0efe9', icon: '📄' },
   { href: '/student/appointments',        title: 'Book appointment',          desc: 'Book a 1:1 session with a career adviser.',                color: '#185FA5', bg: '#E6F1FB', icon: '🗓' },
+  { href: '/student/profile',             title: 'My profile',                desc: 'Update your name, faculty, year and contact details.',      color: '#888',    bg: '#f0efe9', icon: '👤' },
 ]
 
 export default async function StudentDashboard() {
@@ -48,7 +49,9 @@ export default async function StudentDashboard() {
         <NavLogo />
         <div className="flex items-center gap-3">
           <NotificationBell userId={user.id} />
-          <span className="text-[12.5px] text-[#666]">{profile?.full_name ?? user.email}</span>
+          <Link href="/student/profile" className="text-[12.5px] text-[#666] hover:text-[#185FA5]">
+            {profile?.full_name ?? user.email}
+          </Link>
           <form action={signOut}>
             <button type="submit" className="text-[12px] text-[#185FA5] hover:underline">Sign out</button>
           </form>
