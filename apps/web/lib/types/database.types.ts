@@ -2,6 +2,7 @@ export type UserRole = 'student' | 'employer' | 'staff' | 'admin'
 
 export type EventType = 'workshop' | 'speaker' | 'career_fair' | 'webinar' | 'other'
 
+export type BookingStatus    = 'pending' | 'confirmed' | 'cancelled' | 'completed'
 export type JobType          = 'job' | 'internship'
 export type JobStatus        = 'draft' | 'published' | 'closed'
 export type ApplicationStatus = 'submitted' | 'reviewed' | 'shortlisted' | 'rejected' | 'hired'
@@ -278,6 +279,105 @@ export interface Database {
         }
       }
     }
+      announcements: {
+        Row: {
+          id: string
+          title: string
+          body: string
+          icon: string
+          color: string
+          is_published: boolean
+          sort_order: number
+          created_by: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          title: string
+          body: string
+          icon?: string
+          color?: string
+          is_published?: boolean
+          sort_order?: number
+          created_by?: string | null
+        }
+        Update: {
+          title?: string
+          body?: string
+          icon?: string
+          color?: string
+          is_published?: boolean
+          sort_order?: number
+        }
+      }
+      audit_logs: {
+        Row: {
+          id: string
+          actor_id: string | null
+          actor_email: string | null
+          action: string
+          target_table: string | null
+          target_id: string | null
+          metadata: Record<string, unknown> | null
+          created_at: string
+        }
+        Insert: {
+          actor_id?: string | null
+          actor_email?: string | null
+          action: string
+          target_table?: string | null
+          target_id?: string | null
+          metadata?: Record<string, unknown> | null
+        }
+        Update: Record<string, never>
+      }
+      appointment_slots: {
+        Row: {
+          id: string
+          staff_id: string
+          slot_date: string
+          start_time: string
+          end_time: string
+          label: string | null
+          is_available: boolean
+          created_at: string
+        }
+        Insert: {
+          staff_id: string
+          slot_date: string
+          start_time: string
+          end_time: string
+          label?: string | null
+          is_available?: boolean
+        }
+        Update: {
+          is_available?: boolean
+          label?: string | null
+        }
+      }
+      bookings: {
+        Row: {
+          id: string
+          slot_id: string
+          student_id: string
+          reason: string | null
+          status: BookingStatus
+          staff_notes: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          slot_id: string
+          student_id: string
+          reason?: string | null
+          status?: BookingStatus
+        }
+        Update: {
+          status?: BookingStatus
+          staff_notes?: string | null
+        }
+      }
+    }
     Enums: {
       user_role: UserRole
       letter_status: LetterStatus
@@ -285,6 +385,7 @@ export interface Database {
       job_type: JobType
       job_status: JobStatus
       application_status: ApplicationStatus
+      booking_status: BookingStatus
     }
   }
 }

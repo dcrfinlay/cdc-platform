@@ -78,14 +78,15 @@ export default async function StaffDashboard() {
             </div>
             <div className="text-[12px] text-[#888]">Review and approve student letter requests.</div>
           </Link>
-          <Link
-            href="/staff/events"
-            className="bg-white border border-[#e5e4df] rounded-xl p-5 hover:border-[#aaa] transition-colors group"
-          >
-            <div className="text-[14px] font-bold group-hover:text-[#185FA5] transition-colors mb-2">
-              Events
-            </div>
+          <Link href="/staff/events"
+            className="bg-white border border-[#e5e4df] rounded-xl p-5 hover:border-[#aaa] transition-colors group">
+            <div className="text-[14px] font-bold group-hover:text-[#185FA5] transition-colors mb-2">Events</div>
             <div className="text-[12px] text-[#888]">Create and manage events, track attendance.</div>
+          </Link>
+          <Link href="/staff/appointments"
+            className="bg-white border border-[#e5e4df] rounded-xl p-5 hover:border-[#aaa] transition-colors group">
+            <div className="text-[14px] font-bold group-hover:text-[#185FA5] transition-colors mb-2">Appointments</div>
+            <div className="text-[12px] text-[#888]">Manage your availability and upcoming bookings.</div>
           </Link>
         </div>
       </div>

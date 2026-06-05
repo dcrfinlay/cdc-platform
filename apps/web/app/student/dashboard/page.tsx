@@ -53,6 +53,14 @@ const QUICK_LINKS = [
     bg:    '#f0efe9',
     icon:  '📄',
   },
+  {
+    href:  '/student/appointments',
+    title: 'Book appointment',
+    desc:  'Book a 1:1 session with a career adviser.',
+    color: '#185FA5',
+    bg:    '#E6F1FB',
+    icon:  '🗓',
+  },
 ]
 
 export default async function StudentDashboard() {
