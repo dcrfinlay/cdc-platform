@@ -6,18 +6,36 @@ import { NavLogo } from '@/components/nav-logo'
 
 const QUICK_LINKS = [
   {
+    href:  '/student/events',
+    title: 'Browse events',
+    desc:  'Workshops, speaker sessions, career fairs and webinars.',
+    color: '#185FA5',
+    bg:    '#E6F1FB',
+    icon:  '📅',
+  },
+  {
     href:  '/student/letters/new',
     title: 'Request internship letter',
     desc:  'Submit a new letter request — ready within 48 hours.',
-    color: '#185FA5',
-    bg:    '#E6F1FB',
+    color: '#0F6E56',
+    bg:    '#E1F5EE',
+    icon:  '✉',
   },
   {
     href:  '/student/letters',
     title: 'My letter requests',
     desc:  'Track the status of your existing letter requests.',
-    color: '#0F6E56',
-    bg:    '#E1F5EE',
+    color: '#854F0B',
+    bg:    '#FAEEDA',
+    icon:  '📄',
+  },
+  {
+    href:  '/student/events/my-registrations',
+    title: 'My event registrations',
+    desc:  'View your registered events and QR attendance codes.',
+    color: '#534AB7',
+    bg:    '#EEEDFE',
+    icon:  '🎟',
   },
 ]
 
@@ -84,7 +102,7 @@ export default async function StudentDashboard() {
                 className="w-8 h-8 rounded-lg flex items-center justify-center mb-3 text-lg"
                 style={{ background: link.bg, color: link.color }}
               >
-                {link.href.includes('new') ? '✉' : '📄'}
+                {link.icon}
               </div>
               <div className="text-[14px] font-bold text-[#1a1a18] mb-1 group-hover:text-[#185FA5] transition-colors">
                 {link.title}

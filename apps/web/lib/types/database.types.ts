@@ -1,5 +1,7 @@
 export type UserRole = 'student' | 'employer' | 'staff' | 'admin'
 
+export type EventType = 'workshop' | 'speaker' | 'career_fair' | 'webinar' | 'other'
+
 export type LetterStatus =
   | 'submitted'
   | 'under_review'
@@ -116,9 +118,68 @@ export interface Database {
         }
       }
     }
+      events: {
+        Row: {
+          id: string
+          title: string
+          description: string | null
+          type: EventType
+          event_date: string
+          end_date: string | null
+          location: string | null
+          is_online: boolean
+          capacity: number | null
+          is_published: boolean
+          created_by: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          title: string
+          description?: string | null
+          type?: EventType
+          event_date: string
+          end_date?: string | null
+          location?: string | null
+          is_online?: boolean
+          capacity?: number | null
+          is_published?: boolean
+          created_by?: string | null
+        }
+        Update: {
+          title?: string
+          description?: string | null
+          type?: EventType
+          event_date?: string
+          end_date?: string | null
+          location?: string | null
+          is_online?: boolean
+          capacity?: number | null
+          is_published?: boolean
+        }
+      }
+      event_registrations: {
+        Row: {
+          id: string
+          event_id: string
+          student_id: string
+          qr_token: string
+          registered_at: string
+          attended_at: string | null
+        }
+        Insert: {
+          event_id: string
+          student_id: string
+        }
+        Update: {
+          attended_at?: string | null
+        }
+      }
+    }
     Enums: {
       user_role: UserRole
       letter_status: LetterStatus
+      event_type: EventType
     }
   }
 }
