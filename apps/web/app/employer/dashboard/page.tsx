@@ -4,6 +4,14 @@ import Link from 'next/link'
 import { signOut } from '@/features/auth/actions/sign-out'
 import { NavLogo } from '@/components/nav-logo'
 import { NotificationBell } from '@/features/notifications/components/notification-bell'
+import { MobileMenu } from '@/components/mobile-menu'
+
+const EMPLOYER_NAV = [
+  { href: '/employer/dashboard',     label: 'Dashboard'        },
+  { href: '/employer/jobs',          label: 'My job postings'  },
+  { href: '/employer/notifications', label: 'Notifications'    },
+  { href: '/employer/profile',       label: 'Company profile'  },
+]
 
 export default async function EmployerDashboard() {
   const supabase = await createClient()
@@ -46,12 +54,13 @@ export default async function EmployerDashboard() {
         <NavLogo />
         <div className="flex items-center gap-3">
           <NotificationBell userId={user.id} />
-          <Link href="/employer/profile" className="text-[12.5px] text-[#666] hover:text-[#185FA5]">
+          <Link href="/employer/profile" className="text-[12.5px] text-[#666] hover:text-[#185FA5] hidden sm:block">
             {employer.company_name}
           </Link>
-          <form action={signOut}>
+          <form action={signOut} className="hidden sm:block">
             <button type="submit" className="text-[12px] text-[#185FA5] hover:underline">Sign out</button>
           </form>
+          <MobileMenu items={EMPLOYER_NAV} userName={employer.company_name} />
         </div>
       </nav>
 

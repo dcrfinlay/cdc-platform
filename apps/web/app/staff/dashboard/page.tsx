@@ -3,6 +3,15 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { signOut } from '@/features/auth/actions/sign-out'
 import { NavLogo } from '@/components/nav-logo'
+import { MobileMenu } from '@/components/mobile-menu'
+
+const STAFF_NAV = [
+  { href: '/staff/dashboard',    label: 'Dashboard'            },
+  { href: '/staff/letters',      label: 'Internship letters'   },
+  { href: '/staff/events',       label: 'Events'               },
+  { href: '/staff/appointments', label: 'Appointments'         },
+  { href: '/staff/profile',      label: 'My profile'           },
+]
 
 export default async function StaffDashboard() {
   const supabase = await createClient()
@@ -32,10 +41,11 @@ export default async function StaffDashboard() {
       <nav className="bg-white border-b border-[#e5e4df] px-7 py-3 flex items-center justify-between">
         <NavLogo />
         <div className="flex items-center gap-4">
-          <span className="text-[12.5px] text-[#666]">{profile?.full_name ?? user.email}</span>
-          <form action={signOut}>
+          <span className="text-[12.5px] text-[#666] hidden sm:block">{profile?.full_name ?? user.email}</span>
+          <form action={signOut} className="hidden sm:block">
             <button type="submit" className="text-[12px] text-[#185FA5] hover:underline">Sign out</button>
           </form>
+          <MobileMenu items={STAFF_NAV} userName={profile?.full_name ?? user.email} />
         </div>
       </nav>
 

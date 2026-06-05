@@ -4,6 +4,18 @@ import Link from 'next/link'
 import { signOut } from '@/features/auth/actions/sign-out'
 import { NavLogo } from '@/components/nav-logo'
 import { NotificationBell } from '@/features/notifications/components/notification-bell'
+import { MobileMenu } from '@/components/mobile-menu'
+
+const STUDENT_NAV = [
+  { href: '/student/dashboard',             label: 'Dashboard'            },
+  { href: '/student/events',                label: 'Events'               },
+  { href: '/student/jobs',                  label: 'Jobs & internships'   },
+  { href: '/student/letters',               label: 'Internship letters'   },
+  { href: '/student/appointments',          label: 'Appointments'         },
+  { href: '/student/resume',                label: 'My CV'                },
+  { href: '/student/notifications',         label: 'Notifications'        },
+  { href: '/student/profile',               label: 'My profile'           },
+]
 
 const ICON_MAP: Record<string, string> = {
   info: 'ℹ', briefcase: '💼', clock: '⏰', star: '⭐', bell: '🔔', users: '👥',
@@ -49,12 +61,13 @@ export default async function StudentDashboard() {
         <NavLogo />
         <div className="flex items-center gap-3">
           <NotificationBell userId={user.id} />
-          <Link href="/student/profile" className="text-[12.5px] text-[#666] hover:text-[#185FA5]">
+          <Link href="/student/profile" className="text-[12.5px] text-[#666] hover:text-[#185FA5] hidden sm:block">
             {profile?.full_name ?? user.email}
           </Link>
-          <form action={signOut}>
+          <form action={signOut} className="hidden sm:block">
             <button type="submit" className="text-[12px] text-[#185FA5] hover:underline">Sign out</button>
           </form>
+          <MobileMenu items={STUDENT_NAV} userName={profile?.full_name ?? user.email} />
         </div>
       </nav>
 

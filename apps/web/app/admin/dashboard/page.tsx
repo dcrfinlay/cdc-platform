@@ -4,6 +4,17 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { signOut } from '@/features/auth/actions/sign-out'
 import { NavLogo } from '@/components/nav-logo'
+import { MobileMenu } from '@/components/mobile-menu'
+
+const ADMIN_NAV = [
+  { href: '/admin/dashboard',     label: 'Dashboard'        },
+  { href: '/admin/employers',     label: 'Employers'        },
+  { href: '/admin/users',         label: 'Users'            },
+  { href: '/admin/announcements', label: 'Announcements'    },
+  { href: '/admin/audit-log',     label: 'Audit log'        },
+  { href: '/staff/letters',       label: 'Letters'          },
+  { href: '/staff/events',        label: 'Events'           },
+]
 
 export default async function AdminDashboard() {
   const supabase = await createClient()
@@ -30,6 +41,7 @@ export default async function AdminDashboard() {
     { href: '/admin/employers',     label: 'Employer approvals',  badge: pendingEmployers ?? 0, badgeColor: '#854F0B', badgeBg: '#FAEEDA' },
     { href: '/admin/users',         label: 'User management',     badge: null },
     { href: '/admin/announcements', label: 'Announcements',       badge: null },
+    { href: '/admin/audit-log',     label: 'Audit log',           badge: null },
     { href: '/staff/letters',       label: 'Internship letters',  badge: totalLetters ?? 0, badgeColor: '#185FA5', badgeBg: '#E6F1FB' },
   ]
 
@@ -37,9 +49,12 @@ export default async function AdminDashboard() {
     <div className="min-h-screen" style={{ background: 'var(--surface)' }}>
       <nav className="bg-white border-b border-[#e5e4df] px-7 py-3 flex items-center justify-between">
         <NavLogo />
-        <form action={signOut}>
-          <button type="submit" className="text-[12px] text-[#185FA5] hover:underline">Sign out</button>
-        </form>
+        <div className="flex items-center gap-3">
+          <form action={signOut} className="hidden sm:block">
+            <button type="submit" className="text-[12px] text-[#185FA5] hover:underline">Sign out</button>
+          </form>
+          <MobileMenu items={ADMIN_NAV} userName="Admin" />
+        </div>
       </nav>
 
       <div className="max-w-5xl mx-auto px-6 py-10">
