@@ -4,7 +4,7 @@ import type { Database } from '@/lib/types/database.types'
 import { getRoleDashboard } from '@/lib/utils'
 
 // Routes accessible without a session
-const PUBLIC_PATHS = ['/login', '/signup', '/magic-link', '/auth']
+const PUBLIC_PATHS = ['/login', '/signup', '/magic-link', '/forgot-password', '/reset-password', '/auth']
 
 // Prefix → roles that may access it
 const ROLE_PREFIXES: Array<{ prefix: string; roles: string[] }> = [
@@ -53,7 +53,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Authenticated user hitting an auth page → send to their dashboard
-  if (user && ['/login', '/signup', '/magic-link'].some(p => pathname.startsWith(p))) {
+  if (user && ['/login', '/signup', '/magic-link', '/forgot-password'].some(p => pathname.startsWith(p))) {
     const role = (user.app_metadata?.role as string) ?? 'student'
     return NextResponse.redirect(new URL(getRoleDashboard(role), request.url))
   }

@@ -46,10 +46,10 @@ export function LoginForm({ next }: LoginFormProps) {
               Password
             </label>
             <Link
-              href="/magic-link"
+              href="/forgot-password"
               className="text-[11.5px] text-[#185FA5] hover:underline"
             >
-              Sign in with magic link
+              Forgot password?
             </Link>
           </div>
           <input
@@ -67,8 +67,7 @@ export function LoginForm({ next }: LoginFormProps) {
           type="submit"
           disabled={pending}
           className="w-full py-3 rounded-lg text-[13.5px] font-bold text-white
-            bg-[#185FA5] hover:opacity-90 transition-opacity disabled:opacity-60
-            mt-2"
+            bg-[#185FA5] hover:opacity-90 transition-opacity disabled:opacity-60 mt-2"
         >
           {pending ? 'Signing in…' : 'Sign in'}
         </button>

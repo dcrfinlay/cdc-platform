@@ -12,9 +12,9 @@ export async function signIn(
   _prev: SignInState,
   formData: FormData
 ): Promise<SignInState> {
-  const email = formData.get('email') as string
+  const email    = formData.get('email') as string
   const password = formData.get('password') as string
-  const next = (formData.get('next') as string) || ''
+  const next     = (formData.get('next') as string) || ''
 
   if (!email || !password) {
     return { error: 'Email and password are required.' }
@@ -24,10 +24,17 @@ export async function signIn(
   const { data, error } = await supabase.auth.signInWithPassword({ email, password })
 
   if (error) {
-    return { error: 'Invalid email or password.' }
+    if (error.message.toLowerCase().includes('email not confirmed')) {
+      return {
+        error:
+          'Please confirm your email address before signing in. ' +
+          'Check your inbox for a confirmation link.',
+      }
+    }
+    return { error: 'Incorrect email or password. Please try again.' }
   }
 
-  const role = (data.user.app_metadata?.role as string) ?? 'student'
+  const role        = (data.user.app_metadata?.role as string) ?? 'student'
   const destination = next.startsWith('/') ? next : getRoleDashboard(role)
   redirect(destination)
 }

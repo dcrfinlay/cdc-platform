@@ -15,27 +15,37 @@ export async function signUp(
   _prev: SignUpState,
   formData: FormData
 ): Promise<SignUpState> {
-  const email = formData.get('email') as string
-  const password = formData.get('password') as string
-  const fullName = formData.get('full_name') as string
-  const role = (formData.get('role') as UserRole) ?? 'student'
+  const email      = formData.get('email') as string
+  const password   = formData.get('password') as string
+  const fullName   = formData.get('full_name') as string
+  const role       = (formData.get('role') as UserRole) ?? 'student'
   const companyName = formData.get('company_name') as string | null
 
   if (!email || !password || !fullName) {
     return { error: 'All fields are required.' }
   }
-
   if (password.length < 8) {
     return { error: 'Password must be at least 8 characters.' }
   }
-
-  // Staff and admin are not self-registerable
   if (role === 'staff' || role === 'admin') {
     return { error: 'Invalid role.' }
   }
-
   if (role === 'employer' && !companyName) {
     return { error: 'Company name is required for employer accounts.' }
+  }
+
+  // Check for existing account using admin client (avoids leaking info via timing)
+  const admin = createAdminClient()
+  const { data: existingUsers } = await admin.auth.admin.listUsers()
+  const alreadyExists = existingUsers?.users.some(
+    u => u.email?.toLowerCase() === email.toLowerCase()
+  )
+  if (alreadyExists) {
+    return {
+      error:
+        'An account with this email already exists. ' +
+        'Please sign in or use "Forgot password?" to reset your password.',
+    }
   }
 
   const supabase = await createClient()
@@ -49,27 +59,23 @@ export async function signUp(
   })
 
   if (error) {
-    if (error.message.includes('already registered')) {
-      return { error: 'An account with this email already exists.' }
-    }
     return { error: error.message }
   }
 
   if (!data.user) {
-    return { success: true } // email confirmation required
+    return { success: true }
   }
 
-  // Create employer record using admin client (bypasses RLS during signup)
-  if (role === 'employer' && companyName) {
-    const admin = createAdminClient()
+  // Create employer record
+  if (role === 'employer' && companyName && data.user) {
     await admin.from('employers').insert({
-      id: data.user.id,
+      id:           data.user.id,
       company_name: companyName,
-      approved: false,
+      approved:     false,
     })
   }
 
-  // If email confirmation is disabled in Supabase, session is available now
+  // Session available immediately (email confirmation disabled)
   if (data.session) {
     redirect(getRoleDashboard(role))
   }
