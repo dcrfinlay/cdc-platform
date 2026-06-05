@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { signOut } from '@/features/auth/actions/sign-out'
 import { NavLogo } from '@/components/nav-logo'
 
@@ -56,10 +57,16 @@ export default async function EmployerDashboard() {
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E1F5EE] text-[#0F6E56] text-[11px] font-bold mb-4">
           Employer
         </div>
-        <h1 className="text-[24px] font-bold mb-2">{employer.company_name}</h1>
-        <p className="text-[13px] text-[#666]">
-          Employer portal. More features coming soon.
-        </p>
+        <h1 className="text-[24px] font-bold mb-8">{employer.company_name}</h1>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Link href="/employer/jobs"
+            className="bg-white border border-[#e5e4df] rounded-xl p-5 hover:border-[#aaa] transition-colors group">
+            <div className="w-8 h-8 rounded-lg bg-[#E1F5EE] flex items-center justify-center mb-3 text-lg">💼</div>
+            <div className="text-[14px] font-bold mb-1 group-hover:text-[#0F6E56] transition-colors">My job postings</div>
+            <div className="text-[12px] text-[#888]">Post jobs and internships, manage applications.</div>
+          </Link>
+        </div>
       </div>
     </div>
   )

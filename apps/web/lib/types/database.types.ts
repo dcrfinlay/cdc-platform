@@ -2,6 +2,10 @@ export type UserRole = 'student' | 'employer' | 'staff' | 'admin'
 
 export type EventType = 'workshop' | 'speaker' | 'career_fair' | 'webinar' | 'other'
 
+export type JobType          = 'job' | 'internship'
+export type JobStatus        = 'draft' | 'published' | 'closed'
+export type ApplicationStatus = 'submitted' | 'reviewed' | 'shortlisted' | 'rejected' | 'hired'
+
 export type LetterStatus =
   | 'submitted'
   | 'under_review'
@@ -176,10 +180,111 @@ export interface Database {
         }
       }
     }
+      jobs: {
+        Row: {
+          id: string
+          employer_id: string
+          title: string
+          description: string | null
+          type: JobType
+          location: string | null
+          is_remote: boolean
+          salary_range: string | null
+          deadline: string | null
+          status: JobStatus
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          employer_id: string
+          title: string
+          description?: string | null
+          type?: JobType
+          location?: string | null
+          is_remote?: boolean
+          salary_range?: string | null
+          deadline?: string | null
+          status?: JobStatus
+        }
+        Update: {
+          title?: string
+          description?: string | null
+          type?: JobType
+          location?: string | null
+          is_remote?: boolean
+          salary_range?: string | null
+          deadline?: string | null
+          status?: JobStatus
+        }
+      }
+      applications: {
+        Row: {
+          id: string
+          job_id: string
+          student_id: string
+          cover_letter: string | null
+          status: ApplicationStatus
+          employer_note: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          job_id: string
+          student_id: string
+          cover_letter?: string | null
+          status?: ApplicationStatus
+        }
+        Update: {
+          status?: ApplicationStatus
+          employer_note?: string | null
+        }
+      }
+      saved_jobs: {
+        Row: {
+          id: string
+          job_id: string
+          student_id: string
+          saved_at: string
+        }
+        Insert: {
+          job_id: string
+          student_id: string
+        }
+        Update: Record<string, never>
+      }
+      resumes: {
+        Row: {
+          id: string
+          student_id: string
+          file_path: string
+          file_name: string
+          file_size: number | null
+          cv_visible: boolean
+          uploaded_at: string
+          updated_at: string
+        }
+        Insert: {
+          student_id: string
+          file_path: string
+          file_name: string
+          file_size?: number | null
+          cv_visible?: boolean
+        }
+        Update: {
+          file_path?: string
+          file_name?: string
+          file_size?: number | null
+          cv_visible?: boolean
+        }
+      }
+    }
     Enums: {
       user_role: UserRole
       letter_status: LetterStatus
       event_type: EventType
+      job_type: JobType
+      job_status: JobStatus
+      application_status: ApplicationStatus
     }
   }
 }

@@ -37,6 +37,22 @@ const QUICK_LINKS = [
     bg:    '#EEEDFE',
     icon:  '🎟',
   },
+  {
+    href:  '/student/jobs',
+    title: 'Jobs & internships',
+    desc:  'Browse open positions from partner employers.',
+    color: '#993C1D',
+    bg:    '#FAECE7',
+    icon:  '💼',
+  },
+  {
+    href:  '/student/resume',
+    title: 'My CV',
+    desc:  'Upload your CV and control employer visibility.',
+    color: '#888',
+    bg:    '#f0efe9',
+    icon:  '📄',
+  },
 ]
 
 export default async function StudentDashboard() {
