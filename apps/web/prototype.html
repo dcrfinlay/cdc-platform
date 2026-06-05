@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Career Centre Portal</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f5f3; color: #1a1a18; }
+
+.nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 28px; background: #fff;
+  border-bottom: 1px solid #e5e4df; position: sticky; top: 0; z-index: 10;
+}
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-icon { width: 34px; height: 34px; border-radius: 8px; background: #185FA5; display: flex; align-items: center; justify-content: center; }
+.logo-icon i { color: #E6F1FB; font-size: 17px; }
+.logo-name { font-size: 14px; font-weight: 700; }
+.logo-sub { font-size: 11px; color: #888; }
+.nav-links { display: flex; gap: 2px; flex-wrap: wrap; }
+.nav-link { padding: 6px 13px; border-radius: 7px; font-size: 12.5px; border: none; background: transparent; color: #666; cursor: pointer; transition: all .15s; white-space: nowrap; }
+.nav-link:hover { background: #f0efe9; color: #1a1a18; }
+.nav-link.active { background: #E6F1FB; color: #185FA5; font-weight: 700; }
+.nav-right { display: flex; gap: 8px; align-items: center; }
+.nav-btn { padding: 7px 15px; background: #185FA5; color: #fff; border: none; border-radius: 7px; font-size: 12.5px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.nav-btn-emp { padding: 7px 15px; background: transparent; color: #185FA5; border: 1px solid #185FA5; border-radius: 7px; font-size: 12.5px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.nav-btn-emp:hover { background: #E6F1FB; }
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* HERO */
+.hero { padding: 48px 32px 32px; background: #fff; border-bottom: 1px solid #e5e4df; }
+.hero-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 13px; border-radius: 100px; background: #E6F1FB; color: #185FA5; font-size: 11px; font-weight: 700; margin-bottom: 16px; }
+.hero h1 { font-size: 28px; font-weight: 700; line-height: 1.3; margin-bottom: 10px; }
+.hero p { font-size: 14px; color: #666; line-height: 1.7; max-width: 520px; margin-bottom: 24px; }
+.hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn-primary { padding: 10px 20px; background: #185FA5; color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 7px; }
+.btn-green { padding: 10px 20px; background: #0F6E56; color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 7px; }
+.btn-outline { padding: 10px 20px; background: transparent; color: #1a1a18; border: 1px solid #ccc; border-radius: 8px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 7px; }
+
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); }
+.stat { background: #fff; padding: 20px 28px; border-right: 1px solid #e5e4df; border-bottom: 1px solid #e5e4df; }
+.stat:last-child { border-right: none; }
+.stat-num { font-size: 24px; font-weight: 700; }
+.stat-label { font-size: 11px; color: #888; margin-top: 3px; }
+
+.section { padding: 28px 32px; }
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.section-title { font-size: 17px; font-weight: 700; }
+.section-link { font-size: 12px; color: #185FA5; background: none; border: none; cursor: pointer; }
+
+.anns { display: flex; flex-direction: column; gap: 10px; }
+.ann { display: flex; align-items: flex-start; gap: 13px; padding: 14px 16px; border: 1px solid #e5e4df; border-radius: 11px; background: #fff; }
+.ann-icon { width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 17px; }
+.ann-title { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+.ann-text { font-size: 12px; color: #666; line-height: 1.5; }
+.ann-time { font-size: 11px; color: #aaa; margin-top: 3px; }
+
+.events-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 11px; }
+.event-card { border: 1px solid #e5e4df; border-radius: 11px; overflow: hidden; background: #fff; cursor: pointer; transition: border-color .15s; }
+.event-card:hover { border-color: #aaa; }
+.event-top { padding: 14px; border-bottom: 1px solid #e5e4df; }
+.event-date { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 7px; }
+.event-title { font-size: 13px; font-weight: 700; line-height: 1.4; margin-bottom: 5px; }
+.event-desc { font-size: 11px; color: #666; line-height: 1.5; }
+.event-footer { padding: 9px 14px; display: flex; align-items: center; justify-content: space-between; }
+.badge { font-size: 10px; padding: 3px 9px; border-radius: 100px; font-weight: 700; }
+.badge-green { background: #E1F5EE; color: #0F6E56; }
+.badge-blue { background: #E6F1FB; color: #185FA5; }
+.badge-amber { background: #FAEEDA; color: #854F0B; }
+.badge-purple { background: #EEEDFE; color: #534AB7; }
+.badge-coral { background: #FAECE7; color: #993C1D; }
+.event-seats { font-size: 11px; color: #888; display: flex; align-items: center; gap: 4px; }
+
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: #e5e4df; border: 1px solid #e5e4df; border-radius: 11px; overflow: hidden; }
+.cal-hdr { background: #f5f5f3; padding: 7px 4px; text-align: center; font-size: 10px; font-weight: 700; color: #888; }
+.cal-day { background: #fff; padding: 7px 6px; min-height: 68px; }
+.cal-day.dim { background: #fafaf8; }
+.cal-num { font-size: 11px; margin-bottom: 4px; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; }
+.today .cal-num { background: #185FA5; color: #fff; border-radius: 50%; font-weight: 700; }
+.cal-dot { font-size: 9px; padding: 2px 5px; border-radius: 3px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 700; }
+
+.speakers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap: 11px; }
+.speaker-card { border: 1px solid #e5e4df; border-radius: 11px; padding: 20px 14px; text-align: center; background: #fff; }
+.avatar { width: 50px; height: 50px; border-radius: 50%; margin: 0 auto 11px; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700; }
+.speaker-name { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+.speaker-role { font-size: 11px; color: #666; margin-bottom: 9px; line-height: 1.4; }
+.speaker-date { font-size: 10px; padding: 3px 11px; border-radius: 100px; background: #E6F1FB; color: #185FA5; font-weight: 700; display: inline-block; }
+
+/* TABS */
+.tabs { display: flex; gap: 0; border-bottom: 1px solid #e5e4df; margin-bottom: 24px; }
+.tab-btn { padding: 10px 20px; font-size: 13px; font-weight: 600; border: none; background: transparent; color: #888; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .15s; }
+.tab-btn.active { color: #185FA5; border-bottom-color: #185FA5; }
+.tab-btn:hover { color: #1a1a18; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* FORMS */
+.form-wrap { max-width: 640px; }
+.form-card { background: #fff; border: 1px solid #e5e4df; border-radius: 12px; padding: 26px 26px; }
+.form-title { font-size: 19px; font-weight: 700; margin-bottom: 5px; }
+.form-sub { font-size: 13px; color: #666; line-height: 1.6; margin-bottom: 20px; }
+.form-note { padding: 11px 13px; border-radius: 8px; font-size: 12px; margin-bottom: 20px; display: flex; gap: 8px; align-items: flex-start; }
+.form-note.blue { background: #E6F1FB; color: #185FA5; }
+.form-note.green { background: #E1F5EE; color: #0F6E56; }
+.form-note.amber { background: #FAEEDA; color: #854F0B; }
+.form-row { margin-bottom: 14px; }
+.form-row label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 5px; color: #444; }
+.form-row input, .form-row select, .form-row textarea {
+  width: 100%; padding: 9px 12px; font-size: 13px;
+  border: 1px solid #ccc; border-radius: 8px;
+  background: #fff; color: #1a1a18; font-family: inherit; transition: border-color .15s;
+}
+.form-row input:focus, .form-row select:focus, .form-row textarea:focus { outline: none; border-color: #185FA5; }
+.form-row textarea { resize: vertical; min-height: 78px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #aaa; margin: 20px 0 12px; padding-bottom: 8px; border-bottom: 1px solid #e5e4df; }
+
+.checkbox-group { display: flex; flex-direction: column; gap: 8px; }
+.checkbox-item { display: flex; align-items: center; gap: 9px; font-size: 13px; color: #444; cursor: pointer; }
+.checkbox-item input[type=checkbox] { width: 16px; height: 16px; cursor: pointer; accent-color: #185FA5; }
+
+.submit-btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; transition: opacity .15s; }
+.submit-btn.blue { background: #185FA5; color: #fff; }
+.submit-btn.green { background: #0F6E56; color: #fff; }
+.submit-btn:hover { opacity: 0.88; }
+
+.success-box { display: none; text-align: center; padding: 44px 16px; }
+.success-icon { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+.success-icon.blue { background: #E6F1FB; }
+.success-icon.blue i { font-size: 28px; color: #185FA5; }
+.success-icon.green { background: #E1F5EE; }
+.success-icon.green i { font-size: 28px; color: #0F6E56; }
+.success-box h3 { font-size: 19px; font-weight: 700; margin-bottom: 9px; }
+.success-box p { font-size: 13px; color: #666; line-height: 1.7; }
+
+/* WORKSHOP CARDS */
+.workshop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-bottom: 28px; }
+.workshop-card {
+  border: 2px solid #e5e4df; border-radius: 12px; padding: 18px; background: #fff;
+  cursor: pointer; transition: all .15s; position: relative;
+}
+.workshop-card:hover { border-color: #185FA5; }
+.workshop-card.selected { border-color: #185FA5; background: #f0f7ff; }
+.workshop-card.selected::after { content: '✓'; position: absolute; top: 12px; right: 14px; background: #185FA5; color: #fff; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+.ws-icon { width: 38px; height: 38px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 19px; margin-bottom: 10px; }
+.ws-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+.ws-date { font-size: 11px; color: #888; margin-bottom: 6px; }
+.ws-desc { font-size: 11px; color: #666; line-height: 1.5; }
+.ws-seats { font-size: 10px; margin-top: 8px; padding: 2px 8px; border-radius: 100px; font-weight: 700; display: inline-block; }
+
+/* EMPLOYER HIGHLIGHT CARDS */
+.emp-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 28px; }
+.emp-option { border: 2px solid #e5e4df; border-radius: 12px; padding: 18px; background: #fff; cursor: pointer; transition: all .15s; position: relative; }
+.emp-option:hover { border-color: #0F6E56; }
+.emp-option.selected { border-color: #0F6E56; background: #f0faf6; }
+.emp-option.selected::after { content: '✓'; position: absolute; top: 12px; right: 14px; background: #0F6E56; color: #fff; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+.emp-opt-icon { width: 38px; height: 38px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 19px; margin-bottom: 10px; }
+.emp-opt-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+.emp-opt-desc { font-size: 11px; color: #666; line-height: 1.5; }
+
+@media (max-width: 680px) {
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .form-grid { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+  .hero, .section { padding-left: 18px; padding-right: 18px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="logo">
+    <div class="logo-icon"><i class="ti ti-briefcase"></i></div>
+    <div>
+      <div class="logo-name">Career Centre</div>
+      <div class="logo-sub">University Portal</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <button class="nav-link active" onclick="show('home',this)">Home</button>
+    <button class="nav-link" onclick="show('events',this)">Events</button>
+    <button class="nav-link" onclick="show('speakers',this)">Guest Speakers</button>
+    <button class="nav-link" onclick="show('register',this)">Register for Events</button>
+    <button class="nav-link" onclick="show('internship',this)">Internship Letter</button>
+    <button class="nav-link" onclick="show('employer',this)">For Employers</button>
+  </div>
+  <div class="nav-right">
+    <button class="nav-btn-emp" onclick="show('employer',document.querySelectorAll('.nav-link')[5])">Employer portal</button>
+    <button class="nav-btn">Student login</button>
+  </div>
+</nav>
+
+<!-- ══════════════ HOME ══════════════ -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-tag"><i class="ti ti-sparkles"></i> Your career starts here</div>
+    <h1>Opportunities, events &<br>career support — all in one place</h1>
+    <p>Stay updated on upcoming events, request official documents, and connect with industry leaders. No more Telegram hunting.</p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="show('register',document.querySelectorAll('.nav-link')[3])"><i class="ti ti-calendar-event"></i> Register for events</button>
+      <button class="btn-primary" onclick="show('internship',document.querySelectorAll('.nav-link')[4])"><i class="ti ti-file-text"></i> Request internship letter</button>
+      <button class="btn-green" onclick="show('employer',document.querySelectorAll('.nav-link')[5])"><i class="ti ti-building"></i> Employer registration</button>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="stat-num">12</div><div class="stat-label">Upcoming events</div></div>
+    <div class="stat"><div class="stat-num">4</div><div class="stat-label">Guest speakers this month</div></div>
+    <div class="stat"><div class="stat-num">3</div><div class="stat-label">Active job fairs</div></div>
+    <div class="stat"><div class="stat-num">48h</div><div class="stat-label">Letter processing time</div></div>
+  </div>
+  <div class="section">
+    <div class="section-header"><span class="section-title">Latest announcements</span><button class="section-link">View all</button></div>
+    <div class="anns">
+      <div class="ann">
+        <div class="ann-icon" style="background:#E6F1FB;color:#185FA5;"><i class="ti ti-microphone"></i></div>
+        <div>
+          <div class="ann-title">Guest speaker: Head of HR at Uzum — register now</div>
+          <div class="ann-text">Join us for an exclusive session on building your career in Uzbekistan's tech industry. Limited seats — register by May 28.</div>
+          <div class="ann-time">Posted 2 days ago</div>
+        </div>
+      </div>
+      <div class="ann">
+        <div class="ann-icon" style="background:#E1F5EE;color:#0F6E56;"><i class="ti ti-briefcase"></i></div>
+        <div>
+          <div class="ann-title">Summer internship fair — June 10 — employers still registering</div>
+          <div class="ann-text">20+ companies attending. Students: bring your CV and university ID. Employers: register your company via the Employer Portal.</div>
+          <div class="ann-time">Posted 4 days ago</div>
+        </div>
+      </div>
+      <div class="ann">
+        <div class="ann-icon" style="background:#FAEEDA;color:#854F0B;"><i class="ti ti-clock"></i></div>
+        <div>
+          <div class="ann-title">CV Workshop — only 8 seats remaining</div>
+          <div class="ann-text">Our next CV review workshop on June 7 is nearly full. Register under the Events tab to secure your spot.</div>
+          <div class="ann-time">Posted 1 week ago</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ EVENTS ══════════════ -->
+<div id="page-events" class="page">
+  <div class="section">
+    <div class="section-header"><span class="section-title">May 2025 — calendar</span></div>
+    <div class="cal-grid">
+      <div class="cal-hdr">Mon</div><div class="cal-hdr">Tue</div><div class="cal-hdr">Wed</div><div class="cal-hdr">Thu</div><div class="cal-hdr">Fri</div><div class="cal-hdr">Sat</div><div class="cal-hdr">Sun</div>
+      <div class="cal-day dim"><div class="cal-num">28</div></div><div class="cal-day dim"><div class="cal-num">29</div></div><div class="cal-day dim"><div class="cal-num">30</div></div>
+      <div class="cal-day"><div class="cal-num">1</div></div><div class="cal-day"><div class="cal-num">2</div></div><div class="cal-day"><div class="cal-num">3</div></div><div class="cal-day"><div class="cal-num">4</div></div>
+      <div class="cal-day"><div class="cal-num">5</div></div><div class="cal-day"><div class="cal-num">6</div></div>
+      <div class="cal-day"><div class="cal-num">7</div><div class="cal-dot badge-blue">CV Workshop</div></div>
+      <div class="cal-day"><div class="cal-num">8</div></div><div class="cal-day"><div class="cal-num">9</div></div><div class="cal-day"><div class="cal-num">10</div></div><div class="cal-day"><div class="cal-num">11</div></div>
+      <div class="cal-day"><div class="cal-num">12</div></div><div class="cal-day"><div class="cal-num">13</div></div>
+      <div class="cal-day"><div class="cal-num">14</div><div class="cal-dot badge-green">Guest Speaker</div></div>
+      <div class="cal-day"><div class="cal-num">15</div></div><div class="cal-day"><div class="cal-num">16</div></div><div class="cal-day"><div class="cal-num">17</div></div><div class="cal-day"><div class="cal-num">18</div></div>
+      <div class="cal-day"><div class="cal-num">19</div></div><div class="cal-day"><div class="cal-num">20</div></div>
+      <div class="cal-day today"><div class="cal-num">21</div><div class="cal-dot badge-amber">Mock Interview</div></div>
+      <div class="cal-day"><div class="cal-num">22</div></div><div class="cal-day"><div class="cal-num">23</div></div><div class="cal-day"><div class="cal-num">24</div></div><div class="cal-day"><div class="cal-num">25</div></div>
+      <div class="cal-day"><div class="cal-num">26</div></div><div class="cal-day"><div class="cal-num">27</div></div>
+      <div class="cal-day"><div class="cal-num">28</div><div class="cal-dot badge-purple">Webinar</div></div>
+      <div class="cal-day"><div class="cal-num">29</div></div><div class="cal-day"><div class="cal-num">30</div></div><div class="cal-day"><div class="cal-num">31</div></div>
+      <div class="cal-day dim"><div class="cal-num">1</div></div>
+    </div>
+  </div>
+  <div class="section" style="padding-top:0">
+    <div class="section-header"><span class="section-title">Upcoming events</span><button class="section-link" onclick="show('register',document.querySelectorAll('.nav-link')[3])">Register for an event →</button></div>
+    <div class="events-grid">
+      <div class="event-card">
+        <div class="event-top"><div class="event-date" style="color:#185FA5;">May 21 · 10:00</div><div class="event-title">Mock Interview Day</div><div class="event-desc">Practice with real HR managers. Slots for all faculties.</div></div>
+        <div class="event-footer"><span class="badge badge-amber">Workshop</span><span class="event-seats"><i class="ti ti-users"></i> 12 seats left</span></div>
+      </div>
+      <div class="event-card">
+        <div class="event-top"><div class="event-date" style="color:#0F6E56;">May 28 · 14:00</div><div class="event-title">Live webinar: careers in banking</div><div class="event-desc">Online session with Kapitalbank HR team.</div></div>
+        <div class="event-footer"><span class="badge badge-purple">Webinar</span><span class="event-seats"><i class="ti ti-users"></i> Open</span></div>
+      </div>
+      <div class="event-card">
+        <div class="event-top"><div class="event-date" style="color:#854F0B;">June 7 · 10:00</div><div class="event-title">CV & cover letter workshop</div><div class="event-desc">Expert review of your CV with personalised feedback.</div></div>
+        <div class="event-footer"><span class="badge badge-blue">Workshop</span><span class="event-seats"><i class="ti ti-users"></i> 8 seats left</span></div>
+      </div>
+      <div class="event-card">
+        <div class="event-top"><div class="event-date" style="color:#854F0B;">June 10 · 09:00</div><div class="event-title">Summer internship fair 2025</div><div class="event-desc">20+ companies. Bring your CV and university ID.</div></div>
+        <div class="event-footer"><span class="badge badge-blue">Career fair</span><span class="event-seats"><i class="ti ti-users"></i> Free entry</span></div>
+      </div>
+      <div class="event-card">
+        <div class="event-top"><div class="event-date" style="color:#534AB7;">June 14 · 11:00</div><div class="event-title">Guest speaker: Founder of Humans.uz</div><div class="event-desc">Entrepreneurship and building tech in Uzbekistan.</div></div>
+        <div class="event-footer"><span class="badge badge-green">Speaker</span><span class="event-seats"><i class="ti ti-users"></i> 30 seats</span></div>
+      </div>
+      <div class="event-card">
+        <div class="event-top"><div class="event-date" style="color:#993C1D;">June 20 · 13:00</div><div class="event-title">LinkedIn profile masterclass</div><div class="event-desc">Build a profile that gets noticed by recruiters.</div></div>
+        <div class="event-footer"><span class="badge badge-coral">Workshop</span><span class="event-seats"><i class="ti ti-users"></i> 20 seats</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ GUEST SPEAKERS ══════════════ -->
+<div id="page-speakers" class="page">
+  <div class="section">
+    <div class="section-header"><span class="section-title">Upcoming guest speakers</span></div>
+    <div class="speakers-grid">
+      <div class="speaker-card">
+        <div class="avatar" style="background:#E6F1FB;color:#185FA5;">AK</div>
+        <div class="speaker-name">Alisher Komilov</div>
+        <div class="speaker-role">Head of HR, Uzum Market</div>
+        <span class="speaker-date">May 30</span>
+      </div>
+      <div class="speaker-card">
+        <div class="avatar" style="background:#E1F5EE;color:#0F6E56;">SY</div>
+        <div class="speaker-name">Shirin Yusupova</div>
+        <div class="speaker-role">Founder, Humans.uz</div>
+        <span class="speaker-date">June 14</span>
+      </div>
+      <div class="speaker-card">
+        <div class="avatar" style="background:#FAEEDA;color:#854F0B;">BT</div>
+        <div class="speaker-name">Bobur Tashmatov</div>
+        <div class="speaker-role">VP Engineering, Payme</div>
+        <span class="speaker-date">June 21</span>
+      </div>
+      <div class="speaker-card">
+        <div class="avatar" style="background:#EEEDFE;color:#534AB7;">NR</div>
+        <div class="speaker-name">Nilufar Rashidova</div>
+        <div class="speaker-role">Senior Recruiter, KPMG</div>
+        <span class="speaker-date">July 3</span>
+      </div>
+    </div>
+    <div style="margin-top:18px;padding:14px;background:#f5f5f3;border-radius:10px;font-size:12px;color:#666;display:flex;align-items:center;gap:8px;">
+      <i class="ti ti-bell" style="color:#185FA5;"></i>
+      Want to be notified when new speakers are announced? Log in to enable notifications.
+      &nbsp;<button class="btn-primary" style="padding:6px 14px;font-size:12px;margin-left:auto;" onclick="show('register',document.querySelectorAll('.nav-link')[3])">Register for a talk</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ STUDENT REGISTRATION ══════════════ -->
+<div id="page-register" class="page">
+  <div class="section">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('tab-workshop',this)"><i class="ti ti-writing"></i> CV & workshops</button>
+      <button class="tab-btn" onclick="showTab('tab-speaker',this)"><i class="ti ti-microphone"></i> Guest speaker talks</button>
+      <button class="tab-btn" onclick="showTab('tab-fair',this)"><i class="ti ti-building-store"></i> Career fairs</button>
+    </div>
+
+    <!-- CV & WORKSHOPS TAB -->
+    <div id="tab-workshop" class="tab-panel active">
+      <div class="form-wrap">
+        <div id="ws-form-area">
+          <p style="font-size:13px;color:#666;margin-bottom:20px;">Select the workshop you want to attend, then fill in your details below.</p>
+          <div class="workshop-grid">
+            <div class="workshop-card" onclick="selectWS(this,'CV &amp; Cover Letter Workshop — June 7')">
+              <div class="ws-icon" style="background:#E6F1FB;color:#185FA5;"><i class="ti ti-file-cv"></i></div>
+              <div class="ws-title">CV & Cover Letter Workshop</div>
+              <div class="ws-date"><i class="ti ti-calendar"></i> June 7 · 10:00–12:00</div>
+              <div class="ws-desc">Get expert feedback on your CV and learn to write a standout cover letter.</div>
+              <span class="ws-seats badge-amber" style="margin-top:8px;">8 seats left</span>
+            </div>
+            <div class="workshop-card" onclick="selectWS(this,'Mock Interview Day — May 21')">
+              <div class="ws-icon" style="background:#FAEEDA;color:#854F0B;"><i class="ti ti-users"></i></div>
+              <div class="ws-title">Mock Interview Day</div>
+              <div class="ws-date"><i class="ti ti-calendar"></i> May 21 · 10:00–15:00</div>
+              <div class="ws-desc">Practice interviews with HR professionals. Get real feedback before the real thing.</div>
+              <span class="ws-seats badge-amber" style="margin-top:8px;">12 seats left</span>
+            </div>
+            <div class="workshop-card" onclick="selectWS(this,'LinkedIn Profile Masterclass — June 20')">
+              <div class="ws-icon" style="background:#FAECE7;color:#993C1D;"><i class="ti ti-brand-linkedin"></i></div>
+              <div class="ws-title">LinkedIn Profile Masterclass</div>
+              <div class="ws-date"><i class="ti ti-calendar"></i> June 20 · 13:00–14:30</div>
+              <div class="ws-desc">Build a recruiter-ready LinkedIn profile from scratch.</div>
+              <span class="ws-seats badge-green" style="margin-top:8px;">20 seats</span>
+            </div>
+            <div class="workshop-card" onclick="selectWS(this,'Careers in Banking Webinar — May 28')">
+              <div class="ws-icon" style="background:#EEEDFE;color:#534AB7;"><i class="ti ti-device-laptop"></i></div>
+              <div class="ws-title">Careers in Banking — Webinar</div>
+              <div class="ws-date"><i class="ti ti-calendar"></i> May 28 · 14:00 (online)</div>
+              <div class="ws-desc">Live session with Kapitalbank. Join from anywhere — link sent after registration.</div>
+              <span class="ws-seats badge-green" style="margin-top:8px;">Open registration</span>
+            </div>
+          </div>
+
+          <div class="form-card">
+            <div class="form-title">Your details</div>
+            <div class="form-note blue"><i class="ti ti-info-circle" style="flex-shrink:0;margin-top:1px;"></i><span>You are registering for: <strong id="ws-selected-label">— please select a workshop above —</strong></span></div>
+            <div class="form-grid">
+              <div class="form-row"><label>Full name</label><input type="text" placeholder="As on your student ID" /></div>
+              <div class="form-row"><label>Student ID</label><input type="text" placeholder="e.g. STU-2024-0012" /></div>
+            </div>
+            <div class="form-grid">
+              <div class="form-row">
+                <label>Faculty</label>
+                <select><option value="">Select faculty</option><option>Economics</option><option>Law</option><option>Engineering</option><option>Business</option><option>IT</option><option>Medicine</option></select>
+              </div>
+              <div class="form-row">
+                <label>Year of study</label>
+                <select><option value="">Select year</option><option>1st year</option><option>2nd year</option><option>3rd year</option><option>4th year</option><option>Masters</option></select>
+              </div>
+            </div>
+            <div class="form-grid">
+              <div class="form-row"><label>Email address</label><input type="email" placeholder="your@university.uz" /></div>
+              <div class="form-row"><label>Phone number</label><input type="tel" placeholder="+998 90 123 45 67" /></div>
+            </div>
+            <div class="form-row">
+              <label>What do you hope to get from this session? (optional)</label>
+              <textarea placeholder="e.g. I want feedback on my CV before applying to internships..."></textarea>
+            </div>
+            <button class="submit-btn blue" onclick="submitSuccess('ws-form-area','ws-success')">Register my spot</button>
+          </div>
+        </div>
+        <div id="ws-success" class="success-box">
+          <div class="success-icon blue"><i class="ti ti-calendar-check"></i></div>
+          <h3>You're registered!</h3>
+          <p>Your spot has been reserved. You'll receive a confirmation email with all the details and any joining instructions.</p>
+          <button class="btn-outline" style="margin:22px auto 0;display:inline-flex;" onclick="resetSuccess('ws-form-area','ws-success')">Register for another event</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GUEST SPEAKER TAB -->
+    <div id="tab-speaker" class="tab-panel">
+      <div class="form-wrap">
+        <div id="spk-form-area">
+          <p style="font-size:13px;color:#666;margin-bottom:20px;">Choose a guest speaker session and register your attendance below.</p>
+          <div class="workshop-grid">
+            <div class="workshop-card" onclick="selectWS2(this,'Alisher Komilov — Head of HR, Uzum Market (May 30)')">
+              <div class="ws-icon" style="background:#E6F1FB;color:#185FA5;"><i class="ti ti-microphone"></i></div>
+              <div class="ws-title">Alisher Komilov</div>
+              <div class="ws-date">Head of HR · Uzum Market · May 30 · 11:00</div>
+              <div class="ws-desc">Career paths in Uzbekistan's tech sector and what top employers look for.</div>
+              <span class="ws-seats badge-amber" style="margin-top:8px;">15 seats left</span>
+            </div>
+            <div class="workshop-card" onclick="selectWS2(this,'Shirin Yusupova — Founder, Humans.uz (June 14)')">
+              <div class="ws-icon" style="background:#E1F5EE;color:#0F6E56;"><i class="ti ti-rocket"></i></div>
+              <div class="ws-title">Shirin Yusupova</div>
+              <div class="ws-date">Founder · Humans.uz · June 14 · 11:00</div>
+              <div class="ws-desc">From student to startup founder — entrepreneurship in Uzbekistan.</div>
+              <span class="ws-seats badge-green" style="margin-top:8px;">30 seats</span>
+            </div>
+            <div class="workshop-card" onclick="selectWS2(this,'Bobur Tashmatov — VP Engineering, Payme (June 21)')">
+              <div class="ws-icon" style="background:#FAEEDA;color:#854F0B;"><i class="ti ti-code"></i></div>
+              <div class="ws-title">Bobur Tashmatov</div>
+              <div class="ws-date">VP Engineering · Payme · June 21 · 14:00</div>
+              <div class="ws-desc">Building a tech career in fintech — skills, growth, and what it takes.</div>
+              <span class="ws-seats badge-green" style="margin-top:8px;">25 seats</span>
+            </div>
+            <div class="workshop-card" onclick="selectWS2(this,'Nilufar Rashidova — Senior Recruiter, KPMG (July 3)')">
+              <div class="ws-icon" style="background:#EEEDFE;color:#534AB7;"><i class="ti ti-search"></i></div>
+              <div class="ws-title">Nilufar Rashidova</div>
+              <div class="ws-date">Senior Recruiter · KPMG · July 3 · 10:00</div>
+              <div class="ws-desc">How recruiters screen candidates and how to stand out in applications.</div>
+              <span class="ws-seats badge-amber" style="margin-top:8px;">10 seats left</span>
+            </div>
+          </div>
+
+          <div class="form-card">
+            <div class="form-title">Your details</div>
+            <div class="form-note blue"><i class="ti ti-info-circle" style="flex-shrink:0;margin-top:1px;"></i><span>Registering for: <strong id="spk-selected-label">— please select a session above —</strong></span></div>
+            <div class="form-grid">
+              <div class="form-row"><label>Full name</label><input type="text" placeholder="As on your student ID" /></div>
+              <div class="form-row"><label>Student ID</label><input type="text" placeholder="e.g. STU-2024-0012" /></div>
+            </div>
+            <div class="form-grid">
+              <div class="form-row"><label>Faculty</label>
+                <select><option value="">Select faculty</option><option>Economics</option><option>Law</option><option>Engineering</option><option>Business</option><option>IT</option><option>Medicine</option></select>
+              </div>
+              <div class="form-row"><label>Year of study</label>
+                <select><option value="">Select year</option><option>1st year</option><option>2nd year</option><option>3rd year</option><option>4th year</option><option>Masters</option></select>
+              </div>
+            </div>
+            <div class="form-grid">
+              <div class="form-row"><label>Email address</label><input type="email" placeholder="your@university.uz" /></div>
+              <div class="form-row"><label>Phone number</label><input type="tel" placeholder="+998 90 123 45 67" /></div>
+            </div>
+            <div class="form-row">
+              <label>Question for the speaker (optional)</label>
+              <textarea placeholder="Any question you'd like the speaker to address..."></textarea>
+            </div>
+            <button class="submit-btn blue" onclick="submitSuccess('spk-form-area','spk-success')">Register my spot</button>
+          </div>
+        </div>
+        <div id="spk-success" class="success-box">
+          <div class="success-icon blue"><i class="ti ti-calendar-check"></i></div>
+          <h3>You're registered!</h3>
+          <p>Your spot has been reserved. A confirmation email with venue details will be sent to you shortly.</p>
+          <button class="btn-outline" style="margin:22px auto 0;display:inline-flex;" onclick="resetSuccess('spk-form-area','spk-success')">Register for another session</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAREER FAIR TAB -->
+    <div id="tab-fair" class="tab-panel">
+      <div class="form-wrap">
+        <div id="fair-form-area" class="form-card">
+          <div class="form-title">Register for summer internship fair</div>
+          <div class="form-sub">June 10, 2025 · 09:00–16:00 · Main University Hall<br>20+ companies attending. Free for all students.</div>
+          <div class="form-note amber"><i class="ti ti-alert-circle" style="flex-shrink:0;margin-top:1px;"></i><span>Bring your printed CV and university student ID on the day. Smart casual dress recommended.</span></div>
+          <div class="form-grid">
+            <div class="form-row"><label>Full name</label><input type="text" placeholder="As on your student ID" /></div>
+            <div class="form-row"><label>Student ID</label><input type="text" placeholder="e.g. STU-2024-0012" /></div>
+          </div>
+          <div class="form-grid">
+            <div class="form-row"><label>Faculty</label>
+              <select><option value="">Select faculty</option><option>Economics</option><option>Law</option><option>Engineering</option><option>Business</option><option>IT</option><option>Medicine</option></select>
+            </div>
+            <div class="form-row"><label>Year of study</label>
+              <select><option value="">Select year</option><option>1st year</option><option>2nd year</option><option>3rd year</option><option>4th year</option><option>Masters</option></select>
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="form-row"><label>Email address</label><input type="email" placeholder="your@university.uz" /></div>
+            <div class="form-row"><label>Phone number</label><input type="tel" placeholder="+998 90 123 45 67" /></div>
+          </div>
+          <div class="form-row">
+            <label>Which industries are you most interested in? (select all that apply)</label>
+            <div class="checkbox-group" style="margin-top:6px;">
+              <label class="checkbox-item"><input type="checkbox"> Technology & IT</label>
+              <label class="checkbox-item"><input type="checkbox"> Banking & Finance</label>
+              <label class="checkbox-item"><input type="checkbox"> Consulting</label>
+              <label class="checkbox-item"><input type="checkbox"> Marketing & PR</label>
+              <label class="checkbox-item"><input type="checkbox"> Law & Legal</label>
+              <label class="checkbox-item"><input type="checkbox"> Engineering & Manufacturing</label>
+              <label class="checkbox-item"><input type="checkbox"> Healthcare</label>
+              <label class="checkbox-item"><input type="checkbox"> Other</label>
+            </div>
+          </div>
+          <div class="form-row" style="margin-top:16px;">
+            <label>Anything you'd like us to know? (optional)</label>
+            <textarea placeholder="e.g. I'm specifically looking for a 3-month summer placement..."></textarea>
+          </div>
+          <button class="submit-btn blue" onclick="submitSuccess('fair-form-area','fair-success')">Register for the fair</button>
+        </div>
+        <div id="fair-success" class="success-box">
+          <div class="success-icon blue"><i class="ti ti-building-store"></i></div>
+          <h3>You're on the list!</h3>
+          <p>We've registered you for the Summer Internship Fair on June 10. A reminder email will be sent 2 days before the event. Remember to bring your CV and student ID!</p>
+          <button class="btn-outline" style="margin:22px auto 0;display:inline-flex;" onclick="resetSuccess('fair-form-area','fair-success')">Go back</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ INTERNSHIP LETTER ══════════════ -->
+<div id="page-internship" class="page">
+  <div class="section">
+    <div class="form-wrap">
+      <div id="int-form-area" class="form-card">
+        <div class="form-title">Request an internship letter</div>
+        <div class="form-sub">Fill in the details below. Your letter will be ready within 48 hours. You'll be notified by email when it's ready for pickup or dispatched by post.</div>
+        <div class="form-note blue"><i class="ti ti-info-circle" style="flex-shrink:0;margin-top:1px;"></i><span>Letters require an original signature and stamp. You will receive a notification once your letter is signed and ready.</span></div>
+        <div class="form-grid">
+          <div class="form-row"><label>Full name</label><input type="text" placeholder="As on your student ID" /></div>
+          <div class="form-row"><label>Student ID</label><input type="text" placeholder="e.g. STU-2024-0012" /></div>
+        </div>
+        <div class="form-grid">
+          <div class="form-row"><label>Faculty</label>
+            <select><option value="">Select faculty</option><option>Economics</option><option>Law</option><option>Engineering</option><option>Business</option><option>IT</option><option>Medicine</option></select>
+          </div>
+          <div class="form-row"><label>Year of study</label>
+            <select><option value="">Select year</option><option>1st year</option><option>2nd year</option><option>3rd year</option><option>4th year</option><option>Masters</option></select>
+          </div>
+        </div>
+        <div class="form-row"><label>Company / organisation name</label><input type="text" placeholder="Where will you intern?" /></div>
+        <div class="form-grid">
+          <div class="form-row"><label>Internship start date</label><input type="date" /></div>
+          <div class="form-row"><label>Internship end date</label><input type="date" /></div>
+        </div>
+        <div class="form-grid">
+          <div class="form-row"><label>Phone number</label><input type="tel" placeholder="+998 90 123 45 67" /></div>
+          <div class="form-row"><label>Email address</label><input type="email" placeholder="your@university.uz" /></div>
+        </div>
+        <div class="form-row"><label>How would you like to receive the letter?</label>
+          <select><option>I will pick it up in person</option><option>Send by post</option></select>
+        </div>
+        <div class="form-row"><label>Additional notes (optional)</label><textarea placeholder="Any special instructions..."></textarea></div>
+        <button class="submit-btn blue" onclick="submitSuccess('int-form-area','int-success')">Submit request</button>
+      </div>
+      <div id="int-success" class="success-box">
+        <div class="success-icon blue"><i class="ti ti-check"></i></div>
+        <h3>Request submitted!</h3>
+        <p>Your internship letter request has been received. You'll get an email notification within 48 hours when your letter is ready to collect or has been posted.</p>
+        <button class="btn-outline" style="margin:22px auto 0;display:inline-flex;" onclick="resetSuccess('int-form-area','int-success')">Submit another request</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ EMPLOYER PORTAL ══════════════ -->
+<div id="page-employer" class="page">
+  <div class="section">
+    <div style="max-width:720px;">
+      <div style="margin-bottom:24px;">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#0F6E56;margin-bottom:8px;">For companies & organisations</div>
+        <h2 style="font-size:24px;font-weight:700;margin-bottom:8px;">Partner with our Career Centre</h2>
+        <p style="font-size:13px;color:#666;line-height:1.7;">Register your company to speak at our events, attend career fairs, post job opportunities, or run workshops. Select what you're interested in below.</p>
+      </div>
+
+      <div class="emp-options">
+        <div class="emp-option" onclick="selectEmp(this,'Guest speaker session')">
+          <div class="emp-opt-icon" style="background:#E1F5EE;color:#0F6E56;"><i class="ti ti-microphone"></i></div>
+          <div class="emp-opt-title">Guest speaker session</div>
+          <div class="emp-opt-desc">Come and speak to our students about your industry, company, or career journey.</div>
+        </div>
+        <div class="emp-option" onclick="selectEmp(this,'Career fair booth')">
+          <div class="emp-opt-icon" style="background:#E6F1FB;color:#185FA5;"><i class="ti ti-building-store"></i></div>
+          <div class="emp-opt-title">Career fair booth</div>
+          <div class="emp-opt-desc">Set up a booth at our career fair and meet students face-to-face.</div>
+        </div>
+        <div class="emp-option" onclick="selectEmp(this,'Run a workshop')">
+          <div class="emp-opt-icon" style="background:#FAEEDA;color:#854F0B;"><i class="ti ti-writing"></i></div>
+          <div class="emp-opt-title">Run a workshop</div>
+          <div class="emp-opt-desc">Deliver a skills workshop — CV review, case studies, technical sessions, and more.</div>
+        </div>
+        <div class="emp-option" onclick="selectEmp(this,'Post internship / job opportunities')">
+          <div class="emp-opt-icon" style="background:#EEEDFE;color:#534AB7;"><i class="ti ti-news"></i></div>
+          <div class="emp-opt-title">Post internships / jobs</div>
+          <div class="emp-opt-desc">Advertise vacancies and internships directly to our student community.</div>
+        </div>
+      </div>
+
+      <div id="emp-form-area" class="form-card">
+        <div class="form-title">Company registration</div>
+        <div class="form-sub">Tell us about your organisation and what you're looking to do. Our team will be in touch within 2 working days.</div>
+        <div class="form-note green"><i class="ti ti-info-circle" style="flex-shrink:0;margin-top:1px;"></i><span>Interested in: <strong id="emp-selected-label">— please select an option above —</strong></span></div>
+
+        <div class="form-section-label">Company information</div>
+        <div class="form-grid">
+          <div class="form-row"><label>Company name</label><input type="text" placeholder="e.g. Uzum Market" /></div>
+          <div class="form-row"><label>Industry / sector</label>
+            <select><option value="">Select sector</option><option>Technology & IT</option><option>Banking & Finance</option><option>Consulting</option><option>FMCG / Retail</option><option>Manufacturing</option><option>Healthcare</option><option>Law</option><option>Media & Marketing</option><option>Public sector / NGO</option><option>Other</option></select>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-row"><label>Company website</label><input type="url" placeholder="https://www.company.uz" /></div>
+          <div class="form-row"><label>Company size</label>
+            <select><option value="">Select size</option><option>1–10 employees</option><option>11–50 employees</option><option>51–200 employees</option><option>200+ employees</option></select>
+          </div>
+        </div>
+
+        <div class="form-section-label">Contact person</div>
+        <div class="form-grid">
+          <div class="form-row"><label>Full name</label><input type="text" placeholder="Contact person's name" /></div>
+          <div class="form-row"><label>Job title</label><input type="text" placeholder="e.g. HR Manager" /></div>
+        </div>
+        <div class="form-grid">
+          <div class="form-row"><label>Work email</label><input type="email" placeholder="hr@company.uz" /></div>
+          <div class="form-row"><label>Phone number</label><input type="tel" placeholder="+998 90 123 45 67" /></div>
+        </div>
+
+        <div class="form-section-label">Your proposal</div>
+        <div class="form-row">
+          <label>Briefly describe what you'd like to do with our students</label>
+          <textarea placeholder="e.g. We'd like to send our HR Director to speak about careers in fintech, targeting final year students in Economics and IT..."></textarea>
+        </div>
+        <div class="form-row">
+          <label>Preferred dates / timeframes (optional)</label>
+          <input type="text" placeholder="e.g. Any Thursday in June, or June 10 career fair" />
+        </div>
+        <div class="form-row">
+          <label>Are you also interested in recruiting our students?</label>
+          <select>
+            <option value="">Select</option>
+            <option>Yes — internships</option>
+            <option>Yes — full-time graduate roles</option>
+            <option>Yes — both</option>
+            <option>Not at this time</option>
+          </select>
+        </div>
+        <button class="submit-btn green" onclick="submitSuccess('emp-form-area','emp-success')">Submit registration</button>
+      </div>
+
+      <div id="emp-success" class="success-box">
+        <div class="success-icon green"><i class="ti ti-building-check"></i></div>
+        <h3>Registration received!</h3>
+        <p>Thank you for registering with our Career Centre. A member of our team will review your submission and be in touch within 2 working days to discuss next steps.</p>
+        <button class="btn-outline" style="margin:22px auto 0;display:inline-flex;" onclick="resetSuccess('emp-form-area','emp-success')">Submit another registration</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function show(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+function selectWS(card, label) {
+  document.querySelectorAll('#tab-workshop .workshop-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  document.getElementById('ws-selected-label').textContent = label;
+}
+function selectWS2(card, label) {
+  document.querySelectorAll('#tab-speaker .workshop-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  document.getElementById('spk-selected-label').textContent = label;
+}
+function selectEmp(card, label) {
+  document.querySelectorAll('.emp-option').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  document.getElementById('emp-selected-label').textContent = label;
+}
+function submitSuccess(formId, successId) {
+  document.getElementById(formId).style.display = 'none';
+  document.getElementById(successId).style.display = 'block';
+}
+function resetSuccess(formId, successId) {
+  document.getElementById(formId).style.display = 'block';
+  document.getElementById(successId).style.display = 'none';
+}
+</script>
+</body>
+</html>

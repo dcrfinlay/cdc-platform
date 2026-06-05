@@ -1,0 +1,23 @@
+# env files — never commit real credentials
+.env
+.env.local
+.env.*.local
+
+# Next.js
+apps/web/.next/
+apps/web/out/
+
+# dependencies
+node_modules/
+apps/web/node_modules/
+
+# build output
+apps/web/build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# editors
+.vscode/
+.idea/

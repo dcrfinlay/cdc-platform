@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+:root {
+  --brand: #185FA5;
+  --brand-light: #E6F1FB;
+  --green: #0F6E56;
+  --green-light: #E1F5EE;
+  --surface: #f5f5f3;
+  --border: #e5e4df;
+  --text: #1a1a18;
+  --muted: #666;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--surface);
+  color: var(--text);
+  font-family: 'Segoe UI', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
