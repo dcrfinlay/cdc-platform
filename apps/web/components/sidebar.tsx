@@ -124,15 +124,18 @@ function UserFooter({ userName, userEmail, roleStyle }: {
 function SidebarLogo({ dashHref }: { dashHref: string }) {
   return (
     <div className="px-4 py-4 border-b border-white/10">
-      <Link href={dashHref} className="block hover:opacity-85 transition-opacity">
-        <Image
-          src="/cdc-logo.png"
-          alt="Career Development Centre — British Management University"
-          width={180}
-          height={56}
-          className="h-10 w-auto brightness-0 invert"
-          priority
-        />
+      <Link href={dashHref} className="block hover:opacity-90 transition-opacity">
+        {/* White bg preserves logo colors on dark sidebar */}
+        <div className="bg-white rounded-xl px-3 py-2 inline-block">
+          <Image
+            src="/cdc-logo.png"
+            alt="Career Development Centre — British Management University"
+            width={160}
+            height={50}
+            className="h-9 w-auto"
+            priority
+          />
+        </div>
       </Link>
     </div>
   )
@@ -173,8 +176,10 @@ export function Sidebar({ items, userName, userEmail, role }: SidebarProps) {
       {/* ── Mobile top bar ──────────────────────────────────── */}
       <header className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-2.5 border-b border-white/10"
         style={{ background: 'var(--sidebar-bg)' }}>
-        <Link href={roleStyle.dashHref} className="hover:opacity-85 transition-opacity">
-          <Image src="/cdc-logo.png" alt="Career Development Centre — BMU" width={140} height={44} className="h-8 w-auto brightness-0 invert" />
+        <Link href={roleStyle.dashHref} className="hover:opacity-90 transition-opacity">
+          <div className="bg-white rounded-lg px-2.5 py-1.5 inline-block">
+            <Image src="/cdc-logo.png" alt="Career Development Centre — BMU" width={120} height={38} className="h-7 w-auto" />
+          </div>
         </Link>
         <button onClick={() => setOpen(true)} aria-label="Open navigation"
           className="p-2 rounded-lg text-[var(--sidebar-text)] hover:bg-[var(--sidebar-hover)] hover:text-white transition-all">
@@ -195,8 +200,10 @@ export function Sidebar({ items, userName, userEmail, role }: SidebarProps) {
             className="lg:hidden fixed left-0 top-0 h-screen w-72 z-50 flex flex-col animate-fade-in"
             style={{ background: 'var(--sidebar-bg)' }}>
             <div className="flex items-center justify-between px-4 py-4 border-b border-white/10">
-              <Link href={roleStyle.dashHref} onClick={close} className="hover:opacity-85 transition-opacity">
-                <Image src="/cdc-logo.png" alt="Career Development Centre — BMU" width={140} height={44} className="h-8 w-auto brightness-0 invert" />
+              <Link href={roleStyle.dashHref} onClick={close} className="hover:opacity-90 transition-opacity">
+                <div className="bg-white rounded-lg px-2.5 py-1.5 inline-block">
+                  <Image src="/cdc-logo.png" alt="Career Development Centre — BMU" width={120} height={38} className="h-7 w-auto" />
+                </div>
               </Link>
               <button onClick={close} aria-label="Close navigation"
                 className="p-1.5 rounded-lg text-[var(--sidebar-text)] hover:bg-[var(--sidebar-hover)]">

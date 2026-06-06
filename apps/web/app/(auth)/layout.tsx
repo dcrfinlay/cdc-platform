@@ -23,14 +23,14 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             backgroundSize: '32px 32px',
           }} />
 
-        {/* Logo */}
-        <div className="relative">
+        {/* Logo — white bg preserves navy colors on dark gradient */}
+        <div className="bg-white/95 rounded-2xl px-4 py-3 inline-block">
           <Image
             src="/cdc-logo.png"
             alt="Career Development Centre — British Management University"
-            width={220}
-            height={68}
-            className="h-12 w-auto brightness-0 invert"
+            width={200}
+            height={62}
+            className="h-11 w-auto"
             priority
           />
         </div>
