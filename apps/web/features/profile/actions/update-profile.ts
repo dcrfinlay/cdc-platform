@@ -13,16 +13,32 @@ export async function updateStudentProfile(
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Not authenticated.' }
 
-  const full_name    = formData.get('full_name')    as string
-  const phone        = formData.get('phone')        as string | null
-  const faculty      = formData.get('faculty')      as string | null
+  const full_name     = formData.get('full_name')     as string
+  const phone         = formData.get('phone')         as string | null
+  const faculty       = formData.get('faculty')       as string | null
   const year_of_study = formData.get('year_of_study') as string | null
+  const graduation_year_raw = formData.get('graduation_year') as string | null
+  const degree        = formData.get('degree')        as string | null
+  const skills_raw    = formData.get('skills')        as string | null
 
   if (!full_name) return { error: 'Full name is required.' }
 
+  const graduation_year = graduation_year_raw ? parseInt(graduation_year_raw, 10) : null
+  const skills = skills_raw
+    ? skills_raw.split(',').map(s => s.trim()).filter(Boolean)
+    : []
+
   const { error } = await supabase
     .from('profiles')
-    .update({ full_name, phone: phone || null, faculty: faculty || null, year_of_study: year_of_study || null })
+    .update({
+      full_name,
+      phone:           phone           || null,
+      faculty:         faculty         || null,
+      year_of_study:   year_of_study   || null,
+      graduation_year: graduation_year || null,
+      degree:          degree          || null,
+      skills,
+    })
     .eq('id', user.id)
 
   if (error) return { error: 'Failed to update profile.' }
