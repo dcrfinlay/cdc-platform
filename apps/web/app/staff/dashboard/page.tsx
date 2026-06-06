@@ -1,17 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { signOut } from '@/features/auth/actions/sign-out'
-import { NavLogo } from '@/components/nav-logo'
-import { MobileMenu } from '@/components/mobile-menu'
-
-const STAFF_NAV = [
-  { href: '/staff/dashboard',    label: 'Dashboard'            },
-  { href: '/staff/letters',      label: 'Internship letters'   },
-  { href: '/staff/events',       label: 'Events'               },
-  { href: '/staff/appointments', label: 'Appointments'         },
-  { href: '/staff/profile',      label: 'My profile'           },
-]
+import { FileText, CalendarDays, BookOpen, ChevronRight } from 'lucide-react'
 
 export default async function StaffDashboard() {
   const supabase = await createClient()
@@ -19,15 +9,10 @@ export default async function StaffDashboard() {
   if (!user) redirect('/login')
 
   const { data: profile } = await supabase
-    .from('profiles')
-    .select('full_name, role')
-    .eq('id', user.id)
-    .single()
+    .from('profiles').select('full_name, role').eq('id', user.id).single()
 
-  // Letter counts by actionable status
   const { data: letterCounts } = await supabase
-    .from('internship_letters')
-    .select('status')
+    .from('internship_letters').select('status')
 
   const counts = (letterCounts ?? []).reduce<Record<string, number>>((acc, r) => {
     acc[r.status] = (acc[r.status] ?? 0) + 1
@@ -35,70 +20,78 @@ export default async function StaffDashboard() {
   }, {})
 
   const pending = (counts['submitted'] ?? 0) + (counts['under_review'] ?? 0)
+  const firstName = profile?.full_name?.split(' ')[0] ?? 'there'
+
+  const STATS = [
+    { label: 'Submitted',    value: counts['submitted']    ?? 0, color: 'var(--brand)',  bg: 'var(--brand-light)'  },
+    { label: 'Under review', value: counts['under_review'] ?? 0, color: 'var(--amber)',  bg: 'var(--amber-light)'  },
+    { label: 'Approved',     value: counts['approved']     ?? 0, color: 'var(--green)',  bg: 'var(--green-light)'  },
+    { label: 'Collected',    value: counts['collected']    ?? 0, color: 'var(--subtle)', bg: '#F3F4F6'             },
+  ]
+
+  const LINKS = [
+    {
+      href: '/staff/letters', Icon: FileText,    title: 'Internship letters',
+      desc: 'Review and approve student requests', badge: pending > 0 ? `${pending} pending` : null,
+      color: 'var(--amber)', bg: 'var(--amber-light)',
+    },
+    {
+      href: '/staff/events', Icon: CalendarDays, title: 'Events',
+      desc: 'Create events, track attendance', badge: null,
+      color: 'var(--brand)', bg: 'var(--brand-light)',
+    },
+    {
+      href: '/staff/appointments', Icon: BookOpen, title: 'Appointments',
+      desc: 'Manage availability and bookings', badge: null,
+      color: 'var(--green)', bg: 'var(--green-light)',
+    },
+  ]
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--surface)' }}>
-      <nav className="bg-white border-b border-[#e5e4df] px-7 py-3 flex items-center justify-between">
-        <NavLogo />
-        <div className="flex items-center gap-4">
-          <span className="text-[12.5px] text-[#666] hidden sm:block">{profile?.full_name ?? user.email}</span>
-          <form action={signOut} className="hidden sm:block">
-            <button type="submit" className="text-[12px] text-[#185FA5] hover:underline">Sign out</button>
-          </form>
-          <MobileMenu items={STAFF_NAV} userName={profile?.full_name ?? user.email} />
-        </div>
-      </nav>
+    <div className="p-6 lg:p-10 max-w-5xl mx-auto">
+      {/* Header */}
+      <div className="mb-8">
+        <p className="text-[13px] text-[var(--muted)] mb-1 capitalize">{profile?.role ?? 'Staff'}</p>
+        <h1 className="text-[28px] font-bold tracking-tight">Welcome, {firstName}</h1>
+      </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-10">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FAEEDA] text-[#854F0B] text-[11px] font-bold mb-4 capitalize">
-          {profile?.role ?? 'Staff'}
-        </div>
-        <h1 className="text-[24px] font-bold mb-8">Staff dashboard</h1>
-
-        {/* Stats row */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-          {[
-            { label: 'Submitted',    value: counts['submitted']    ?? 0, color: '#185FA5' },
-            { label: 'Under review', value: counts['under_review'] ?? 0, color: '#854F0B' },
-            { label: 'Approved',     value: counts['approved']     ?? 0, color: '#0F6E56' },
-            { label: 'Collected',    value: counts['collected']    ?? 0, color: '#888'    },
-          ].map(s => (
-            <div key={s.label} className="bg-white border border-[#e5e4df] rounded-xl p-4">
-              <div className="text-[22px] font-bold" style={{ color: s.color }}>{s.value}</div>
-              <div className="text-[11px] text-[#888] mt-1">{s.label}</div>
+      {/* Letter stats */}
+      <h2 className="text-[12px] font-bold text-[var(--subtle)] uppercase tracking-widest mb-4">Letter pipeline</h2>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+        {STATS.map(s => (
+          <div key={s.label} className="bg-white rounded-2xl border border-[var(--border)] p-5 shadow-[var(--shadow-sm)]">
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center mb-3" style={{ background: s.bg }}>
+              <div className="w-2 h-2 rounded-full" style={{ background: s.color }} />
             </div>
-          ))}
-        </div>
+            <div className="text-[26px] font-bold" style={{ color: s.color }}>{s.value}</div>
+            <div className="text-[11px] text-[var(--muted)] mt-1">{s.label}</div>
+          </div>
+        ))}
+      </div>
 
-        {/* Quick links */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Link
-            href="/staff/letters"
-            className="bg-white border border-[#e5e4df] rounded-xl p-5 hover:border-[#aaa] transition-colors group"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <div className="text-[14px] font-bold group-hover:text-[#185FA5] transition-colors">
-                Internship letters
+      {/* Quick links */}
+      <h2 className="text-[12px] font-bold text-[var(--subtle)] uppercase tracking-widest mb-4">Actions</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {LINKS.map(({ href, Icon, title, desc, badge, color, bg }) => (
+          <Link key={href} href={href}
+            className="flex flex-col p-5 rounded-2xl border border-[var(--border)] bg-white
+              hover:border-[var(--border-strong)] hover:shadow-[var(--shadow-sm)] transition-all group">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: bg }}>
+                <Icon size={17} style={{ color }} />
               </div>
-              {pending > 0 && (
-                <span className="px-2 py-0.5 rounded-full bg-[#FAEEDA] text-[#854F0B] text-[10px] font-bold">
-                  {pending} pending
+              {badge && (
+                <span className="text-[10px] font-bold px-2 py-1 rounded-full"
+                  style={{ background: 'var(--amber-light)', color: 'var(--amber)' }}>
+                  {badge}
                 </span>
               )}
             </div>
-            <div className="text-[12px] text-[#888]">Review and approve student letter requests.</div>
+            <div className="text-[13px] font-semibold text-[var(--text)] group-hover:text-[var(--brand)] transition-colors mb-1">{title}</div>
+            <div className="text-[11px] text-[var(--muted)] flex-1">{desc}</div>
+            <ChevronRight size={14} className="text-[var(--border-strong)] mt-3 group-hover:translate-x-0.5 transition-transform" />
           </Link>
-          <Link href="/staff/events"
-            className="bg-white border border-[#e5e4df] rounded-xl p-5 hover:border-[#aaa] transition-colors group">
-            <div className="text-[14px] font-bold group-hover:text-[#185FA5] transition-colors mb-2">Events</div>
-            <div className="text-[12px] text-[#888]">Create and manage events, track attendance.</div>
-          </Link>
-          <Link href="/staff/appointments"
-            className="bg-white border border-[#e5e4df] rounded-xl p-5 hover:border-[#aaa] transition-colors group">
-            <div className="text-[14px] font-bold group-hover:text-[#185FA5] transition-colors mb-2">Appointments</div>
-            <div className="text-[12px] text-[#888]">Manage your availability and upcoming bookings.</div>
-          </Link>
-        </div>
+        ))}
       </div>
     </div>
   )

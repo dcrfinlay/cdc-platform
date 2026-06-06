@@ -2,20 +2,13 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { signOut } from '@/features/auth/actions/sign-out'
-import { NavLogo } from '@/components/nav-logo'
-import { MobileMenu } from '@/components/mobile-menu'
+import { Building2, Users, Megaphone, BarChart3, ClipboardList, FileText, ChevronRight } from 'lucide-react'
 
-const ADMIN_NAV = [
-  { href: '/admin/dashboard',     label: 'Dashboard'        },
-  { href: '/admin/employers',     label: 'Employers'        },
-  { href: '/admin/users',         label: 'Users'            },
-  { href: '/admin/announcements', label: 'Announcements'    },
-  { href: '/admin/outcomes',      label: 'Outcomes'         },
-  { href: '/admin/audit-log',     label: 'Audit log'        },
-  { href: '/staff/letters',       label: 'Letters'          },
-  { href: '/staff/events',        label: 'Events'           },
-]
+const ACTION_LABELS: Record<string, string> = {
+  'employer.approved': 'Employer approved',
+  'employer.rejected': 'Employer access revoked',
+  'user.role_changed': 'User role changed',
+}
 
 export default async function AdminDashboard() {
   const supabase = await createClient()
@@ -35,107 +28,100 @@ export default async function AdminDashboard() {
     admin.from('employers').select('*', { count: 'exact', head: true }).eq('approved', false),
     admin.from('jobs').select('*', { count: 'exact', head: true }).eq('status', 'published'),
     admin.from('internship_letters').select('*', { count: 'exact', head: true }).in('status', ['submitted', 'under_review']),
-    admin.from('audit_logs').select('action, actor_email, created_at, metadata').order('created_at', { ascending: false }).limit(8),
+    admin.from('audit_logs').select('action, actor_email, created_at').order('created_at', { ascending: false }).limit(6),
   ])
 
-  const QUICK_LINKS = [
-    { href: '/admin/employers',     label: 'Employer approvals',  badge: pendingEmployers ?? 0, badgeColor: '#854F0B', badgeBg: '#FAEEDA' },
-    { href: '/admin/users',         label: 'User management',     badge: null },
-    { href: '/admin/announcements', label: 'Announcements',       badge: null },
-    { href: '/admin/outcomes',       label: 'Graduate outcomes',   badge: null },
-    { href: '/admin/audit-log',     label: 'Audit log',           badge: null },
-    { href: '/staff/letters',       label: 'Internship letters',  badge: totalLetters ?? 0, badgeColor: '#185FA5', badgeBg: '#E6F1FB' },
+  const STATS = [
+    { label: 'Total users',        value: totalUsers       ?? 0, color: 'var(--brand)',  bg: 'var(--brand-light)'  },
+    { label: 'Pending employers',  value: pendingEmployers ?? 0, color: pendingEmployers ? 'var(--amber)' : 'var(--subtle)', bg: pendingEmployers ? 'var(--amber-light)' : '#F3F4F6' },
+    { label: 'Active jobs',        value: totalJobs        ?? 0, color: 'var(--green)',  bg: 'var(--green-light)'  },
+    { label: 'Letters pending',    value: totalLetters     ?? 0, color: totalLetters ? 'var(--brand)' : 'var(--subtle)', bg: totalLetters ? 'var(--brand-light)' : '#F3F4F6' },
+  ]
+
+  const LINKS = [
+    { href: '/admin/employers',     Icon: Building2,     label: 'Employer approvals',  badge: pendingEmployers ?? 0  },
+    { href: '/admin/users',         Icon: Users,         label: 'User management',      badge: 0                     },
+    { href: '/admin/announcements', Icon: Megaphone,     label: 'Announcements',        badge: 0                     },
+    { href: '/admin/outcomes',      Icon: BarChart3,     label: 'Graduate outcomes',    badge: 0                     },
+    { href: '/admin/audit-log',     Icon: ClipboardList, label: 'Audit log',            badge: 0                     },
+    { href: '/staff/letters',       Icon: FileText,      label: 'Internship letters',   badge: totalLetters ?? 0     },
   ]
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--surface)' }}>
-      <nav className="bg-white border-b border-[#e5e4df] px-7 py-3 flex items-center justify-between">
-        <NavLogo />
-        <div className="flex items-center gap-3">
-          <form action={signOut} className="hidden sm:block">
-            <button type="submit" className="text-[12px] text-[#185FA5] hover:underline">Sign out</button>
-          </form>
-          <MobileMenu items={ADMIN_NAV} userName="Admin" />
-        </div>
-      </nav>
+    <div className="p-6 lg:p-10 max-w-6xl mx-auto">
+      {/* Header */}
+      <div className="mb-8">
+        <p className="text-[13px] text-[var(--muted)] mb-1">Administrator</p>
+        <h1 className="text-[28px] font-bold tracking-tight">Platform overview</h1>
+      </div>
 
-      <div className="max-w-5xl mx-auto px-6 py-10">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EEEDFE] text-[#534AB7] text-[11px] font-bold mb-4">Admin</div>
-        <h1 className="text-[24px] font-bold mb-8">Admin dashboard</h1>
-
-        {/* Stats */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-          {[
-            { label: 'Total users',       value: totalUsers       ?? 0, color: '#185FA5' },
-            { label: 'Pending employers', value: pendingEmployers ?? 0, color: pendingEmployers ? '#854F0B' : '#888' },
-            { label: 'Active jobs',       value: totalJobs        ?? 0, color: '#0F6E56' },
-            { label: 'Letters pending',   value: totalLetters     ?? 0, color: totalLetters ? '#185FA5' : '#888'    },
-          ].map(s => (
-            <div key={s.label} className="bg-white border border-[#e5e4df] rounded-xl p-4">
-              <div className="text-[22px] font-bold" style={{ color: s.color }}>{s.value}</div>
-              <div className="text-[11px] text-[#888] mt-1">{s.label}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Quick links */}
-          <div>
-            <h2 className="text-[14px] font-bold mb-3">Quick access</h2>
-            <div className="space-y-2">
-              {QUICK_LINKS.map(link => (
-                <Link key={link.href} href={link.href}
-                  className="flex items-center justify-between bg-white border border-[#e5e4df] rounded-xl px-5 py-3.5
-                    hover:border-[#aaa] transition-colors group">
-                  <span className="text-[13px] font-semibold group-hover:text-[#185FA5] transition-colors">
-                    {link.label}
-                  </span>
-                  {link.badge != null && link.badge > 0 && (
-                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-full"
-                      style={{ background: link.badgeBg, color: link.badgeColor }}>
-                      {link.badge}
-                    </span>
-                  )}
-                </Link>
-              ))}
-            </div>
+      {/* Stats */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+        {STATS.map(s => (
+          <div key={s.label} className="bg-white rounded-2xl border border-[var(--border)] p-5 shadow-[var(--shadow-sm)]">
+            <div className="w-8 h-8 rounded-xl mb-3" style={{ background: s.bg }} />
+            <div className="text-[28px] font-bold leading-none" style={{ color: s.color }}>{s.value}</div>
+            <div className="text-[11px] text-[var(--muted)] mt-2">{s.label}</div>
           </div>
+        ))}
+      </div>
 
-          {/* Recent audit log */}
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-[14px] font-bold">Recent activity</h2>
-            </div>
-            <div className="bg-white border border-[#e5e4df] rounded-xl overflow-hidden">
-              {!recentLogs || recentLogs.length === 0 ? (
-                <p className="p-5 text-[13px] text-[#888]">No activity yet.</p>
-              ) : (
-                <div className="divide-y divide-[#e5e4df]">
-                  {recentLogs.map((log, i) => (
-                    <div key={i} className="px-4 py-3">
-                      <div className="text-[12px] font-semibold text-[#1a1a18]">
-                        {formatAction(log.action)}
-                      </div>
-                      <div className="text-[11px] text-[#888] mt-0.5">
-                        {log.actor_email} · {new Date(log.created_at).toLocaleString('en-GB')}
-                      </div>
-                    </div>
-                  ))}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        {/* Quick links — 3 cols */}
+        <div className="lg:col-span-3">
+          <h2 className="text-[12px] font-bold text-[var(--subtle)] uppercase tracking-widest mb-4">Quick access</h2>
+          <div className="space-y-2">
+            {LINKS.map(({ href, Icon, label, badge }) => (
+              <Link key={href} href={href}
+                className="flex items-center gap-4 px-5 py-3.5 rounded-2xl border border-[var(--border)]
+                  bg-white hover:border-[var(--border-strong)] hover:shadow-[var(--shadow-sm)] transition-all group">
+                <div className="w-8 h-8 rounded-xl bg-[var(--bg)] flex items-center justify-center flex-shrink-0">
+                  <Icon size={15} className="text-[var(--muted)]" />
                 </div>
-              )}
+                <span className="flex-1 text-[13px] font-semibold text-[var(--text)] group-hover:text-[var(--brand)] transition-colors">
+                  {label}
+                </span>
+                {badge > 0 && (
+                  <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-[var(--amber-light)] text-[var(--amber)]">
+                    {badge}
+                  </span>
+                )}
+                <ChevronRight size={14} className="text-[var(--border-strong)] group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Recent activity — 2 cols */}
+        <div className="lg:col-span-2">
+          <h2 className="text-[12px] font-bold text-[var(--subtle)] uppercase tracking-widest mb-4">Recent activity</h2>
+          <div className="bg-white rounded-2xl border border-[var(--border)] overflow-hidden shadow-[var(--shadow-sm)]">
+            {!recentLogs || recentLogs.length === 0 ? (
+              <p className="p-6 text-[13px] text-[var(--muted)]">No activity yet.</p>
+            ) : (
+              <div className="divide-y divide-[var(--border)]">
+                {recentLogs.map((log, i) => (
+                  <div key={i} className="px-5 py-3.5">
+                    <div className="text-[12.5px] font-semibold text-[var(--text)]">
+                      {ACTION_LABELS[log.action] ?? log.action}
+                    </div>
+                    <div className="text-[11px] text-[var(--muted)] mt-0.5 flex items-center gap-1.5">
+                      <span className="truncate">{log.actor_email}</span>
+                      <span>·</span>
+                      <span className="flex-shrink-0">{new Date(log.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="px-5 py-3 border-t border-[var(--border)]">
+              <Link href="/admin/audit-log" className="text-[12px] text-[var(--brand)] font-semibold hover:underline">
+                View full log →
+              </Link>
             </div>
           </div>
         </div>
       </div>
     </div>
   )
-}
-
-function formatAction(action: string) {
-  const map: Record<string, string> = {
-    'employer.approved':   'Employer approved',
-    'employer.rejected':   'Employer access revoked',
-    'user.role_changed':   'User role changed',
-  }
-  return map[action] ?? action
 }

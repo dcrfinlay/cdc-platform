@@ -2,45 +2,36 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { signOut } from '@/features/auth/actions/sign-out'
-import { NavLogo } from '@/components/nav-logo'
-import { NotificationBell } from '@/features/notifications/components/notification-bell'
-import { MobileMenu } from '@/components/mobile-menu'
-
-const EMPLOYER_NAV = [
-  { href: '/employer/dashboard',     label: 'Dashboard'        },
-  { href: '/employer/jobs',          label: 'My job postings'  },
-  { href: '/employer/resumes',       label: 'Student CVs'      },
-  { href: '/employer/notifications', label: 'Notifications'    },
-  { href: '/employer/profile',       label: 'Company profile'  },
-]
+import { Briefcase, GraduationCap, Bell, Building2, ChevronRight, Clock } from 'lucide-react'
 
 export default async function EmployerDashboard() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-
   if (!user) redirect('/login')
 
   const { data: employer } = await supabase
     .from('employers')
-    .select('company_name, approved')
+    .select('company_name, approved, industry')
     .eq('id', user.id)
     .single()
 
+  // Pending approval screen
   if (!employer?.approved) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-4"
-        style={{ background: 'var(--surface)' }}>
-        <div className="bg-white border border-[#e5e4df] rounded-xl p-8 max-w-md w-full text-center">
-          <div className="w-12 h-12 rounded-full bg-[#E1F5EE] flex items-center justify-center mx-auto mb-4">
-            <span className="text-[#0F6E56] text-xl">⏳</span>
+      <div className="min-h-screen flex items-center justify-center p-6" style={{ background: 'var(--bg)' }}>
+        <div className="bg-white rounded-3xl border border-[var(--border)] p-10 max-w-md w-full text-center shadow-[var(--shadow-md)]">
+          <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center mx-auto mb-5">
+            <Clock size={28} className="text-amber-600" />
           </div>
-          <h2 className="text-[17px] font-bold mb-2">Account pending approval</h2>
-          <p className="text-[13px] text-[#666] leading-relaxed mb-6">
-            Your employer account for <strong>{employer?.company_name}</strong> is under review.
-            Our team will verify your details and approve access within 2 working days.
+          <h2 className="text-[20px] font-bold mb-2">Account pending approval</h2>
+          <p className="text-[14px] text-[var(--muted)] leading-relaxed mb-8">
+            Your account for <strong className="text-[var(--text)]">{employer?.company_name}</strong> is under review.
+            We'll verify your details and approve access within 2 working days.
           </p>
           <form action={signOut}>
-            <button type="submit" className="text-[12.5px] text-[#185FA5] hover:underline">
+            <button type="submit"
+              className="px-5 py-2.5 rounded-xl text-[13px] font-semibold border border-[var(--border)]
+                text-[var(--muted)] hover:border-[var(--border-strong)] hover:text-[var(--text)] transition-all">
               Sign out
             </button>
           </form>
@@ -49,54 +40,67 @@ export default async function EmployerDashboard() {
     )
   }
 
+  // Stats
+  const [
+    { count: activeJobs },
+    { count: totalApplications },
+    { count: unread },
+  ] = await Promise.all([
+    supabase.from('jobs').select('*', { count: 'exact', head: true }).eq('employer_id', user.id).eq('status', 'published'),
+    supabase.from('applications').select('*, jobs!inner(employer_id)').eq('jobs.employer_id', user.id),
+    supabase.from('notifications').select('*', { count: 'exact', head: true }).eq('user_id', user.id).eq('read', false),
+  ])
+
+  const LINKS = [
+    { href: '/employer/jobs',          Icon: Briefcase,     title: 'Job postings',    desc: 'Post jobs, manage applications',      color: 'var(--green)',  bg: 'var(--green-light)',  stat: `${activeJobs ?? 0} active`  },
+    { href: '/employer/resumes',       Icon: GraduationCap, title: 'Student CVs',     desc: 'Browse opt-in student CVs',           color: 'var(--purple)', bg: 'var(--purple-light)', stat: 'Search CVs'       },
+    { href: '/employer/notifications', Icon: Bell,          title: 'Notifications',   desc: 'Updates from Career Centre',          color: 'var(--brand)',  bg: 'var(--brand-light)',  stat: unread ? `${unread} unread` : 'All read' },
+    { href: '/employer/profile',       Icon: Building2,     title: 'Company profile', desc: 'Update company details',              color: 'var(--muted)',  bg: '#F3F4F6',             stat: 'Edit profile'     },
+  ]
+
   return (
-    <div className="min-h-screen" style={{ background: 'var(--surface)' }}>
-      <nav className="bg-white border-b border-[#e5e4df] px-7 py-3 flex items-center justify-between">
-        <NavLogo />
-        <div className="flex items-center gap-3">
-          <NotificationBell userId={user.id} />
-          <Link href="/employer/profile" className="text-[12.5px] text-[#666] hover:text-[#185FA5] hidden sm:block">
-            {employer.company_name}
-          </Link>
-          <form action={signOut} className="hidden sm:block">
-            <button type="submit" className="text-[12px] text-[#185FA5] hover:underline">Sign out</button>
-          </form>
-          <MobileMenu items={EMPLOYER_NAV} userName={employer.company_name} />
-        </div>
-      </nav>
+    <div className="p-6 lg:p-10 max-w-5xl mx-auto">
+      {/* Header */}
+      <div className="mb-8">
+        <p className="text-[13px] text-[var(--muted)] mb-1">{employer.industry ?? 'Employer account'}</p>
+        <h1 className="text-[28px] font-bold tracking-tight">{employer.company_name}</h1>
+      </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-10">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E1F5EE] text-[#0F6E56] text-[11px] font-bold mb-4">
-          Employer
-        </div>
-        <h1 className="text-[24px] font-bold mb-8">{employer.company_name}</h1>
+      {/* Stats row */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
+        {[
+          { label: 'Active jobs',       value: activeJobs        ?? 0, color: 'var(--green)'  },
+          { label: 'Total applicants',  value: totalApplications ?? 0, color: 'var(--brand)'  },
+          { label: 'Unread alerts',     value: unread            ?? 0, color: unread ? 'var(--amber)' : 'var(--subtle)' },
+        ].map(s => (
+          <div key={s.label} className="bg-white rounded-2xl border border-[var(--border)] p-5 shadow-[var(--shadow-sm)]">
+            <div className="text-[28px] font-bold" style={{ color: s.color }}>{s.value}</div>
+            <div className="text-[12px] text-[var(--muted)] mt-1">{s.label}</div>
+          </div>
+        ))}
+      </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Link href="/employer/jobs"
-            className="bg-white border border-[#e5e4df] rounded-xl p-5 hover:border-[#aaa] transition-colors group">
-            <div className="w-8 h-8 rounded-lg bg-[#E1F5EE] flex items-center justify-center mb-3 text-lg">💼</div>
-            <div className="text-[14px] font-bold mb-1 group-hover:text-[#0F6E56] transition-colors">My job postings</div>
-            <div className="text-[12px] text-[#888]">Post jobs and internships, manage applications.</div>
+      {/* Quick links */}
+      <h2 className="text-[12px] font-bold text-[var(--subtle)] uppercase tracking-widest mb-4">Quick access</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {LINKS.map(({ href, Icon, title, desc, color, bg, stat }) => (
+          <Link key={href} href={href}
+            className="flex items-center gap-4 p-5 rounded-2xl border border-[var(--border)]
+              bg-white hover:border-[var(--border-strong)] hover:shadow-[var(--shadow-sm)]
+              transition-all group">
+            <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: bg }}>
+              <Icon size={18} style={{ color }} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-[13px] font-semibold text-[var(--text)] group-hover:text-[var(--brand)] transition-colors">{title}</div>
+              <div className="text-[11px] text-[var(--muted)]">{desc}</div>
+            </div>
+            <div className="text-right flex-shrink-0">
+              <div className="text-[11px] font-semibold" style={{ color }}>{stat}</div>
+              <ChevronRight size={14} className="text-[var(--border-strong)] mt-0.5 ml-auto group-hover:translate-x-0.5 transition-transform" />
+            </div>
           </Link>
-          <Link href="/employer/notifications"
-            className="bg-white border border-[#e5e4df] rounded-xl p-5 hover:border-[#aaa] transition-colors group">
-            <div className="w-8 h-8 rounded-lg bg-[#E6F1FB] flex items-center justify-center mb-3 text-lg">🔔</div>
-            <div className="text-[14px] font-bold mb-1 group-hover:text-[#185FA5] transition-colors">Notifications</div>
-            <div className="text-[12px] text-[#888]">View updates from the Career Centre.</div>
-          </Link>
-          <Link href="/employer/resumes"
-            className="bg-white border border-[#e5e4df] rounded-xl p-5 hover:border-[#aaa] transition-colors group">
-            <div className="w-8 h-8 rounded-lg bg-[#EEEDFE] flex items-center justify-center mb-3 text-lg">📄</div>
-            <div className="text-[14px] font-bold mb-1 group-hover:text-[#534AB7] transition-colors">Student CVs</div>
-            <div className="text-[12px] text-[#888]">Browse and download student CVs (opt-in only).</div>
-          </Link>
-          <Link href="/employer/profile"
-            className="bg-white border border-[#e5e4df] rounded-xl p-5 hover:border-[#aaa] transition-colors group">
-            <div className="w-8 h-8 rounded-lg bg-[#f0efe9] flex items-center justify-center mb-3 text-lg">🏢</div>
-            <div className="text-[14px] font-bold mb-1 group-hover:text-[#185FA5] transition-colors">Company profile</div>
-            <div className="text-[12px] text-[#888]">Update your company details and contact info.</div>
-          </Link>
-        </div>
+        ))}
       </div>
     </div>
   )
