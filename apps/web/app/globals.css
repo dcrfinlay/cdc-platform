@@ -1,23 +1,88 @@
 @import "tailwindcss";
 
+/* ── Fonts ─────────────────────────────────────────────────── */
 :root {
-  --brand: #185FA5;
-  --brand-light: #E6F1FB;
-  --green: #0F6E56;
-  --green-light: #E1F5EE;
-  --surface: #f5f5f3;
-  --border: #e5e4df;
-  --text: #1a1a18;
-  --muted: #666;
+  --font-sans: 'Inter', 'Segoe UI', Arial, sans-serif;
+
+  /* Brand */
+  --brand:        #185FA5;
+  --brand-hover:  #1352910;
+  --brand-light:  #EBF4FF;
+  --brand-mid:    #B8D9F8;
+
+  /* Green */
+  --green:        #0F6E56;
+  --green-light:  #E3F5EF;
+
+  /* Amber */
+  --amber:        #92500A;
+  --amber-light:  #FEF3E2;
+
+  /* Purple */
+  --purple:       #5B50C8;
+  --purple-light: #EFEDFF;
+
+  /* Coral */
+  --coral:        #B03A20;
+  --coral-light:  #FDECE8;
+
+  /* Neutrals */
+  --bg:           #F4F6F9;
+  --surface:      #F4F6F9;
+  --card:         #FFFFFF;
+  --border:       #E2E6ED;
+  --border-strong:#C8CDD8;
+  --text:         #111827;
+  --text-2:       #374151;
+  --muted:        #6B7280;
+  --subtle:       #9CA3AF;
+  --placeholder:  #D1D5DB;
+
+  /* Shadows */
+  --shadow-sm:    0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+  --shadow:       0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --shadow-md:    0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+  --shadow-lg:    0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.04);
+
+  /* Sidebar */
+  --sidebar-w:    240px;
+  --sidebar-bg:   #0F1C2E;
+  --sidebar-text: #CBD5E1;
+  --sidebar-muted:#64748B;
+  --sidebar-hover:#1E3A5F;
+  --sidebar-active:#185FA5;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
 
 body {
-  background: var(--surface);
+  background: var(--bg);
   color: var(--text);
-  font-family: 'Segoe UI', Arial, sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 14px;
+  line-height: 1.5;
 }
+
+/* ── Scrollbar ──────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* ── Focus ring ─────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* ── Animations ─────────────────────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in { animation: fade-in 0.2s ease both; }
