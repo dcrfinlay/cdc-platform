@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { checkRateLimit } from '@/lib/rate-limit'
 
 export type ForgotPasswordState = {
   error?: string
@@ -14,6 +15,12 @@ export async function forgotPassword(
   const email = formData.get('email') as string
 
   if (!email) return { error: 'Email is required.' }
+
+  const { allowed, retryAfter } = await checkRateLimit('forgot-password')
+  if (!allowed) {
+    const mins = Math.ceil((retryAfter ?? 3600) / 60)
+    return { error: `Too many requests. Please wait ${mins} minute${mins !== 1 ? 's' : ''} before requesting another reset email.` }
+  }
 
   const supabase = await createClient()
 

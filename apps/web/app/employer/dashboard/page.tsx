@@ -9,6 +9,7 @@ import { MobileMenu } from '@/components/mobile-menu'
 const EMPLOYER_NAV = [
   { href: '/employer/dashboard',     label: 'Dashboard'        },
   { href: '/employer/jobs',          label: 'My job postings'  },
+  { href: '/employer/resumes',       label: 'Student CVs'      },
   { href: '/employer/notifications', label: 'Notifications'    },
   { href: '/employer/profile',       label: 'Company profile'  },
 ]
@@ -82,6 +83,12 @@ export default async function EmployerDashboard() {
             <div className="w-8 h-8 rounded-lg bg-[#E6F1FB] flex items-center justify-center mb-3 text-lg">🔔</div>
             <div className="text-[14px] font-bold mb-1 group-hover:text-[#185FA5] transition-colors">Notifications</div>
             <div className="text-[12px] text-[#888]">View updates from the Career Centre.</div>
+          </Link>
+          <Link href="/employer/resumes"
+            className="bg-white border border-[#e5e4df] rounded-xl p-5 hover:border-[#aaa] transition-colors group">
+            <div className="w-8 h-8 rounded-lg bg-[#EEEDFE] flex items-center justify-center mb-3 text-lg">📄</div>
+            <div className="text-[14px] font-bold mb-1 group-hover:text-[#534AB7] transition-colors">Student CVs</div>
+            <div className="text-[12px] text-[#888]">Browse and download student CVs (opt-in only).</div>
           </Link>
           <Link href="/employer/profile"
             className="bg-white border border-[#e5e4df] rounded-xl p-5 hover:border-[#aaa] transition-colors group">

@@ -11,6 +11,7 @@ const ADMIN_NAV = [
   { href: '/admin/employers',     label: 'Employers'        },
   { href: '/admin/users',         label: 'Users'            },
   { href: '/admin/announcements', label: 'Announcements'    },
+  { href: '/admin/outcomes',      label: 'Outcomes'         },
   { href: '/admin/audit-log',     label: 'Audit log'        },
   { href: '/staff/letters',       label: 'Letters'          },
   { href: '/staff/events',        label: 'Events'           },
@@ -41,6 +42,7 @@ export default async function AdminDashboard() {
     { href: '/admin/employers',     label: 'Employer approvals',  badge: pendingEmployers ?? 0, badgeColor: '#854F0B', badgeBg: '#FAEEDA' },
     { href: '/admin/users',         label: 'User management',     badge: null },
     { href: '/admin/announcements', label: 'Announcements',       badge: null },
+    { href: '/admin/outcomes',       label: 'Graduate outcomes',   badge: null },
     { href: '/admin/audit-log',     label: 'Audit log',           badge: null },
     { href: '/staff/letters',       label: 'Internship letters',  badge: totalLetters ?? 0, badgeColor: '#185FA5', badgeBg: '#E6F1FB' },
   ]

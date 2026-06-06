@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { getRoleDashboard } from '@/lib/utils'
+import { checkRateLimit } from '@/lib/rate-limit'
 import { redirect } from 'next/navigation'
 
 export type SignInState = {
@@ -18,6 +19,12 @@ export async function signIn(
 
   if (!email || !password) {
     return { error: 'Email and password are required.' }
+  }
+
+  const { allowed, retryAfter } = await checkRateLimit('signin')
+  if (!allowed) {
+    const mins = Math.ceil((retryAfter ?? 900) / 60)
+    return { error: `Too many sign-in attempts. Please wait ${mins} minute${mins !== 1 ? 's' : ''} and try again.` }
   }
 
   const supabase = await createClient()

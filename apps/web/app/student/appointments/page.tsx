@@ -127,7 +127,15 @@ export default async function StudentAppointmentsPage({ searchParams }: PageProp
                       <div className="flex flex-col items-end gap-2">
                         <span className="text-[10px] font-bold px-2.5 py-1 rounded-full" style={{ background: bg, color }}>{label}</span>
                         {booking.status === 'confirmed' && (
-                          <CancelBookingButton bookingId={booking.id} />
+                          <>
+                            <a
+                              href={`/api/appointments/ical?bookingId=${booking.id}`}
+                              className="text-[11px] text-[#185FA5] hover:underline"
+                            >
+                              + Add to calendar
+                            </a>
+                            <CancelBookingButton bookingId={booking.id} />
+                          </>
                         )}
                       </div>
                     </div>

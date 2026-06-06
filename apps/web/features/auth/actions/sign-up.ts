@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getRoleDashboard } from '@/lib/utils'
+import { checkRateLimit } from '@/lib/rate-limit'
 import { redirect } from 'next/navigation'
 import type { UserRole } from '@/lib/types/database.types'
 
@@ -32,6 +33,12 @@ export async function signUp(
   }
   if (role === 'employer' && !companyName) {
     return { error: 'Company name is required for employer accounts.' }
+  }
+
+  const { allowed, retryAfter } = await checkRateLimit('signup')
+  if (!allowed) {
+    const mins = Math.ceil((retryAfter ?? 3600) / 60)
+    return { error: `Too many sign-up attempts. Please wait ${mins} minute${mins !== 1 ? 's' : ''} and try again.` }
   }
 
   // Check for existing account using admin client (avoids leaking info via timing)

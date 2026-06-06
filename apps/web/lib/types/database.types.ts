@@ -32,6 +32,9 @@ export interface Database {
           phone: string | null
           faculty: string | null
           year_of_study: string | null
+          graduation_year: number | null
+          degree: string | null
+          skills: string[]
           created_at: string
           updated_at: string
         }
@@ -42,12 +45,18 @@ export interface Database {
           phone?: string | null
           faculty?: string | null
           year_of_study?: string | null
+          graduation_year?: number | null
+          degree?: string | null
+          skills?: string[]
         }
         Update: {
           role?: UserRole
           full_name?: string | null
           phone?: string | null
           faculty?: string | null
+          graduation_year?: number | null
+          degree?: string | null
+          skills?: string[]
           year_of_study?: string | null
         }
       }
