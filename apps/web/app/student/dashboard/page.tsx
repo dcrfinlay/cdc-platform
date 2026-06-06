@@ -3,8 +3,9 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import {
   CalendarDays, Mail, ClipboardList, Ticket, Briefcase,
-  FileText, BookOpen, User, ChevronRight, Megaphone,
+  FileText, BookOpen, User, ChevronRight, Bell,
 } from 'lucide-react'
+import { TimeGreeting } from '@/components/time-greeting'
 
 const QUICK_LINKS = [
   { href: '/student/events',                   title: 'Browse events',             desc: 'Workshops, speaker sessions & fairs', Icon: CalendarDays, color: 'var(--brand)',  bg: 'var(--brand-light)'  },
@@ -31,26 +32,26 @@ export default async function StudentDashboard() {
     supabase.from('profiles').select('full_name, faculty, year_of_study').eq('id', user.id).single(),
     supabase.from('internship_letters').select('*', { count: 'exact', head: true })
       .eq('student_id', user.id).in('status', ['submitted', 'under_review', 'approved']),
-    supabase.from('announcements').select('title, body, icon, color')
+    // Only fetch fields actually used — icon/color removed (not rendered)
+    supabase.from('announcements').select('title, body')
       .eq('is_published', true).order('sort_order').order('created_at', { ascending: false }).limit(4),
+    // Fixed: column is is_read, not read
     supabase.from('notifications').select('*', { count: 'exact', head: true })
-      .eq('user_id', user.id).eq('read', false),
+      .eq('user_id', user.id).eq('is_read', false),
   ])
 
   const firstName = profile?.full_name?.split(' ')[0] ?? 'there'
 
   return (
     <div className="p-6 lg:p-10 max-w-6xl mx-auto">
-      {/* Header */}
+      {/* Header — greeting uses client component for correct local timezone */}
       <div className="mb-8">
         <p className="text-[13px] text-[var(--muted)] mb-1">
           {profile?.faculty && profile?.year_of_study
             ? `${profile.faculty} · ${profile.year_of_study}`
             : 'Career Centre portal'}
         </p>
-        <h1 className="text-[28px] font-bold tracking-tight">
-          Good {timeOfDay()}, {firstName} 👋
-        </h1>
+        <TimeGreeting firstName={firstName} />
       </div>
 
       {/* Active letter banner */}
@@ -80,7 +81,7 @@ export default async function StudentDashboard() {
             border-blue-200 bg-blue-50 text-blue-800 hover:bg-blue-100 transition-colors group">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-xl bg-blue-200 flex items-center justify-center">
-              <Megaphone size={15} className="text-blue-800" />
+              <Bell size={15} className="text-blue-800" />
             </div>
             <div>
               <div className="text-[13px] font-bold">
@@ -121,7 +122,7 @@ export default async function StudentDashboard() {
           </div>
         </div>
 
-        {/* Announcements */}
+        {/* Announcements — no hover (no action behind them) */}
         <div>
           <h2 className="text-[12px] font-bold text-[var(--subtle)] uppercase tracking-widest mb-4">Announcements</h2>
           {!announcements || announcements.length === 0 ? (
@@ -131,8 +132,7 @@ export default async function StudentDashboard() {
           ) : (
             <div className="space-y-3">
               {announcements.map((ann, i) => (
-                <div key={i}
-                  className="rounded-2xl border border-[var(--border)] bg-white p-4 hover:border-[var(--border-strong)] transition-colors">
+                <div key={i} className="rounded-2xl border border-[var(--border)] bg-white p-4">
                   <div className="text-[13px] font-semibold mb-1">{ann.title}</div>
                   <p className="text-[12px] text-[var(--muted)] leading-relaxed line-clamp-3">{ann.body}</p>
                 </div>
@@ -143,11 +143,4 @@ export default async function StudentDashboard() {
       </div>
     </div>
   )
-}
-
-function timeOfDay() {
-  const h = new Date().getHours()
-  if (h < 12) return 'morning'
-  if (h < 17) return 'afternoon'
-  return 'evening'
 }

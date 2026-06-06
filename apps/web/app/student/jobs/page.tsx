@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { JobCard } from '@/features/jobs/components/job-card'
 import type { JobType, ApplicationStatus } from '@/lib/types/database.types'
-import { Search } from 'lucide-react'
+import { Search, Briefcase } from 'lucide-react'
 
 const TYPE_FILTERS = [
   { label: 'All',         value: 'all'        },
@@ -29,7 +29,11 @@ export default async function StudentJobsPage({ searchParams }: PageProps) {
     .order('created_at', { ascending: false })
 
   if (typeFilter !== 'all') query = query.eq('type', typeFilter as JobType)
-  if (q) query = query.ilike('title', `%${q}%`)
+
+  // Search both job title and employer company name
+  if (q) {
+    query = query.or(`title.ilike.%${q}%,employers.company_name.ilike.%${q}%`)
+  }
 
   const { data: jobs } = await query
 
@@ -48,7 +52,6 @@ export default async function StudentJobsPage({ searchParams }: PageProps) {
 
   return (
     <div className="p-6 lg:p-10 max-w-5xl mx-auto">
-      {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-[24px] font-bold tracking-tight">Jobs & internships</h1>
@@ -70,13 +73,20 @@ export default async function StudentJobsPage({ searchParams }: PageProps) {
 
       {/* Search + filters */}
       <div className="flex flex-wrap items-center gap-3 mb-6">
-        <form method="GET" className="flex-1 min-w-[200px] relative">
-          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
-          <input type="text" name="q" defaultValue={q}
-            placeholder="Search jobs…"
-            className="w-full pl-9 pr-4 py-2.5 text-[13px] border border-[var(--border)] rounded-xl
-              bg-white focus:outline-none focus:border-[var(--brand)] focus:ring-4 focus:ring-blue-50 transition-all" />
-          {typeFilter !== 'all' && <input type="hidden" name="type" value={typeFilter} />}
+        <form method="GET" className="flex-1 min-w-[200px] flex gap-2">
+          <div className="relative flex-1">
+            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
+            <input type="text" name="q" defaultValue={q}
+              placeholder="Search by title or company…"
+              className="w-full pl-9 pr-4 py-2.5 text-[13px] border border-[var(--border)] rounded-xl
+                bg-white focus:outline-none focus:border-[var(--brand)] focus:ring-4 focus:ring-blue-50 transition-all" />
+            {typeFilter !== 'all' && <input type="hidden" name="type" value={typeFilter} />}
+          </div>
+          {/* Explicit submit button — required for mobile discoverability */}
+          <button type="submit"
+            className="px-4 py-2.5 rounded-xl text-[13px] font-semibold text-white bg-[var(--brand)] hover:opacity-90 transition-opacity flex-shrink-0">
+            Search
+          </button>
         </form>
         <div className="flex gap-1.5">
           {TYPE_FILTERS.map(f => (
@@ -93,9 +103,19 @@ export default async function StudentJobsPage({ searchParams }: PageProps) {
       </div>
 
       {!jobs || jobs.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-[var(--border)] p-12 text-center">
+        <div className="bg-white rounded-2xl border border-[var(--border)] p-14 text-center">
+          <div className="w-14 h-14 rounded-2xl bg-[var(--brand-light)] flex items-center justify-center mx-auto mb-4">
+            <Briefcase size={24} className="text-[var(--brand)]" />
+          </div>
           <p className="text-[14px] font-semibold text-[var(--text)] mb-1">No positions found</p>
-          <p className="text-[13px] text-[var(--muted)]">Try a different filter or check back soon.</p>
+          <p className="text-[13px] text-[var(--muted)]">
+            {q ? `No results for "${q}" — try a different search term.` : 'No open positions right now. Check back soon.'}
+          </p>
+          {q && (
+            <Link href="/student/jobs" className="mt-4 inline-block text-[13px] text-[var(--brand)] font-semibold hover:underline">
+              Clear search
+            </Link>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

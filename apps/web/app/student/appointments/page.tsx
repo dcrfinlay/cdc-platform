@@ -1,9 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
 import { BookSlotForm, CancelBookingButton } from './_actions'
 import type { BookingStatus } from '@/lib/types/database.types'
-import { CheckCircle2, CalendarDays } from 'lucide-react'
+import { CheckCircle2, CalendarDays, CalendarPlus, BookOpen } from 'lucide-react'
 
 interface PageProps {
   searchParams: Promise<{ booked?: string }>
@@ -53,8 +52,13 @@ export default async function StudentAppointmentsPage({ searchParams }: PageProp
       <section className="mb-8">
         <h2 className="text-[15px] font-bold mb-4">Available slots</h2>
         {!slots || slots.length === 0 ? (
+          /* Consistent empty state card — matches rest of page */
           <div className="bg-white rounded-2xl border border-[var(--border)] p-8 text-center">
-            <p className="text-[13px] text-[var(--muted)]">No available slots at the moment. Check back soon.</p>
+            <div className="w-12 h-12 rounded-2xl bg-[var(--brand-light)] flex items-center justify-center mx-auto mb-3">
+              <BookOpen size={20} className="text-[var(--brand)]" />
+            </div>
+            <p className="text-[13px] font-semibold text-[var(--text)] mb-1">No available slots</p>
+            <p className="text-[12px] text-[var(--muted)]">Check back soon — staff add new slots regularly.</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -90,7 +94,10 @@ export default async function StudentAppointmentsPage({ searchParams }: PageProp
       <section>
         <h2 className="text-[15px] font-bold mb-4">My appointments</h2>
         {!bookings || bookings.length === 0 ? (
-          <p className="text-[13px] text-[var(--muted)]">No appointments yet.</p>
+          /* Consistent empty state card — was a bare <p> before */
+          <div className="bg-white rounded-2xl border border-[var(--border)] p-8 text-center">
+            <p className="text-[13px] text-[var(--muted)]">No appointments yet. Book a slot above.</p>
+          </div>
         ) : (
           <div className="space-y-3">
             {bookings.map(booking => {
@@ -100,7 +107,7 @@ export default async function StudentAppointmentsPage({ searchParams }: PageProp
               return (
                 <div key={booking.id} className="bg-white rounded-2xl border border-[var(--border)] p-5 shadow-[var(--shadow-sm)]">
                   <div className="flex items-start justify-between gap-4">
-                    <div>
+                    <div className="flex-1 min-w-0">
                       <div className="text-[14px] font-bold">
                         {slot ? `${fmtDate(slot.slot_date)} · ${slot.start_time?.slice(0,5)}–${slot.end_time?.slice(0,5)}` : '—'}
                       </div>
@@ -112,19 +119,23 @@ export default async function StudentAppointmentsPage({ searchParams }: PageProp
                       {booking.staff_notes && (
                         <p className="text-[12px] text-[var(--brand)] mt-1 font-medium">Note: {booking.staff_notes}</p>
                       )}
-                    </div>
-                    <div className="flex flex-col items-end gap-2">
-                      <span className="text-[10px] font-bold px-2.5 py-1 rounded-full" style={{ background: bg, color }}>{label}</span>
+
+                      {/* Promoted "Add to calendar" — proper button, not tiny text link */}
                       {booking.status === 'confirmed' && (
-                        <>
+                        <div className="flex items-center gap-2 mt-3">
                           <a href={`/api/appointments/ical?bookingId=${booking.id}`}
-                            className="text-[11px] text-[var(--brand)] hover:underline font-medium">
-                            + Add to calendar
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12px] font-semibold
+                              border border-[var(--border)] bg-[var(--bg)] text-[var(--text-2)]
+                              hover:border-[var(--border-strong)] transition-colors">
+                            <CalendarPlus size={13} className="text-[var(--brand)]" />
+                            Add to calendar
                           </a>
                           <CancelBookingButton bookingId={booking.id} />
-                        </>
+                        </div>
                       )}
                     </div>
+                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-full flex-shrink-0"
+                      style={{ background: bg, color }}>{label}</span>
                   </div>
                 </div>
               )

@@ -1,13 +1,13 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useState } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
+import { useState, useEffect, useCallback } from 'react'
 import { signOut } from '@/features/auth/actions/sign-out'
 import {
   LayoutDashboard, Briefcase, FileText, CalendarDays, Bell,
   User, Building2, Users, Megaphone, ClipboardList, BarChart3,
-  GraduationCap, BookOpen, Star, Menu, X, LogOut, ChevronRight,
+  GraduationCap, BookOpen, Star, Menu, X, LogOut,
 } from 'lucide-react'
 
 export interface NavItem {
@@ -39,35 +39,39 @@ function getIcon(href: string): React.ElementType {
   return ICON_MAP[segment] ?? LayoutDashboard
 }
 
-interface SidebarProps {
+export interface SidebarProps {
   items:     NavItem[]
   userName:  string
   userEmail: string
   role:      string
 }
 
-const ROLE_COLORS: Record<string, { bg: string; text: string; label: string }> = {
-  student:  { bg: '#EBF4FF', text: '#185FA5', label: 'Student'  },
-  employer: { bg: '#E3F5EF', text: '#0F6E56', label: 'Employer' },
-  staff:    { bg: '#FEF3E2', text: '#92500A', label: 'Staff'    },
-  admin:    { bg: '#EFEDFF', text: '#5B50C8', label: 'Admin'    },
+const ROLE_COLORS: Record<string, { bg: string; text: string; label: string; dashHref: string }> = {
+  student:  { bg: '#EBF4FF', text: '#185FA5', label: 'Student',  dashHref: '/student/dashboard'  },
+  employer: { bg: '#E3F5EF', text: '#0F6E56', label: 'Employer', dashHref: '/employer/dashboard' },
+  staff:    { bg: '#FEF3E2', text: '#92500A', label: 'Staff',    dashHref: '/staff/dashboard'    },
+  admin:    { bg: '#EFEDFF', text: '#5B50C8', label: 'Admin',    dashHref: '/admin/dashboard'    },
 }
 
-export function Sidebar({ items, userName, userEmail, role }: SidebarProps) {
-  const pathname = usePathname()
-  const [open, setOpen]   = useState(false)
-  const roleStyle = ROLE_COLORS[role] ?? ROLE_COLORS.student
+// ── Sub-components extracted outside Sidebar to prevent remount on state change ──
 
-  const NavLinks = () => (
+function NavLinks({
+  items, pathname, onNavigate,
+}: {
+  items: NavItem[]; pathname: string; onNavigate: () => void
+}) {
+  return (
     <nav className="flex-1 px-3 py-4 overflow-y-auto space-y-0.5">
       {items.map(item => {
-        const Icon    = getIcon(item.href)
-        const active  = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href) && item.href.split('/').length > 2)
+        const Icon   = getIcon(item.href)
+        const active = pathname === item.href ||
+          (item.href !== '/' && pathname.startsWith(item.href) && item.href.split('/').length > 2)
         return (
           <Link
             key={item.href}
             href={item.href}
-            onClick={() => setOpen(false)}
+            onClick={onNavigate}
+            aria-current={active ? 'page' : undefined}
             className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all group
               ${active
                 ? 'bg-[var(--sidebar-active)] text-white'
@@ -86,8 +90,13 @@ export function Sidebar({ items, userName, userEmail, role }: SidebarProps) {
       })}
     </nav>
   )
+}
 
-  const UserFooter = () => (
+function UserFooter({ userName, userEmail, roleStyle }: {
+  userName: string; userEmail: string
+  roleStyle: { bg: string; text: string }
+}) {
+  return (
     <div className="px-3 py-4 border-t border-white/10">
       <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg">
         <div className="w-8 h-8 rounded-full flex items-center justify-center text-[12px] font-bold flex-shrink-0"
@@ -109,10 +118,13 @@ export function Sidebar({ items, userName, userEmail, role }: SidebarProps) {
       </form>
     </div>
   )
+}
 
-  const Logo = () => (
+function SidebarLogo({ dashHref }: { dashHref: string }) {
+  return (
     <div className="px-4 py-5 border-b border-white/10">
-      <div className="flex items-center gap-2.5">
+      {/* Logo links to role dashboard — standard UX pattern */}
+      <Link href={dashHref} className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
         <div className="w-8 h-8 rounded-lg bg-[var(--brand)] flex items-center justify-center flex-shrink-0">
           <GraduationCap size={16} className="text-white" />
         </div>
@@ -120,62 +132,84 @@ export function Sidebar({ items, userName, userEmail, role }: SidebarProps) {
           <div className="text-[13px] font-bold text-white leading-tight">Career Centre</div>
           <div className="text-[10px] text-[var(--sidebar-muted)]">BMU Portal</div>
         </div>
-      </div>
-      <div className="mt-3">
-        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-          style={{ background: roleStyle.bg + '33', color: roleStyle.text, border: `1px solid ${roleStyle.text}33` }}>
-          {roleStyle.label}
-        </span>
-      </div>
+      </Link>
     </div>
   )
+}
+
+// ── Main sidebar ────────────────────────────────────────────
+
+export function Sidebar({ items, userName, userEmail, role }: SidebarProps) {
+  const pathname   = usePathname()
+  const [open, setOpen] = useState(false)
+  const roleStyle  = ROLE_COLORS[role] ?? ROLE_COLORS.student
+
+  const close = useCallback(() => setOpen(false), [])
+
+  // Close mobile drawer on Escape
+  useEffect(() => {
+    if (!open) return
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') close()
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [open, close])
+
+  // Close drawer on route change
+  useEffect(() => { close() }, [pathname, close])
 
   return (
     <>
-      {/* Desktop sidebar */}
+      {/* ── Desktop sidebar ─────────────────────────────────── */}
       <aside className="hidden lg:flex flex-col fixed left-0 top-0 h-screen w-[var(--sidebar-w)] z-30"
         style={{ background: 'var(--sidebar-bg)' }}>
-        <Logo />
-        <NavLinks />
-        <UserFooter />
+        <SidebarLogo dashHref={roleStyle.dashHref} />
+        <NavLinks items={items} pathname={pathname} onNavigate={close} />
+        <UserFooter userName={userName} userEmail={userEmail} roleStyle={roleStyle} />
       </aside>
 
-      {/* Mobile top bar */}
+      {/* ── Mobile top bar ──────────────────────────────────── */}
       <header className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3 border-b border-white/10"
         style={{ background: 'var(--sidebar-bg)' }}>
-        <div className="flex items-center gap-2.5">
+        <Link href={roleStyle.dashHref} className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-lg bg-[var(--brand)] flex items-center justify-center">
             <GraduationCap size={14} className="text-white" />
           </div>
           <div className="text-[13px] font-bold text-white">Career Centre</div>
-        </div>
-        <button onClick={() => setOpen(true)}
+        </Link>
+        <button onClick={() => setOpen(true)} aria-label="Open navigation"
           className="p-2 rounded-lg text-[var(--sidebar-text)] hover:bg-[var(--sidebar-hover)] hover:text-white transition-all">
           <Menu size={18} />
         </button>
       </header>
 
-      {/* Mobile drawer */}
+      {/* ── Mobile drawer ───────────────────────────────────── */}
       {open && (
         <>
+          {/* Backdrop */}
           <div className="lg:hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
-            onClick={() => setOpen(false)} />
-          <aside className="lg:hidden fixed left-0 top-0 h-screen w-72 z-50 flex flex-col animate-fade-in"
+            onClick={close} aria-hidden="true" />
+
+          {/* Drawer — aria-modal traps screen reader focus inside */}
+          <aside
+            role="dialog" aria-modal="true" aria-label="Navigation"
+            className="lg:hidden fixed left-0 top-0 h-screen w-72 z-50 flex flex-col animate-fade-in"
             style={{ background: 'var(--sidebar-bg)' }}>
             <div className="flex items-center justify-between px-4 py-4 border-b border-white/10">
-              <div className="flex items-center gap-2.5">
+              <Link href={roleStyle.dashHref} onClick={close} className="flex items-center gap-2.5">
                 <div className="w-7 h-7 rounded-lg bg-[var(--brand)] flex items-center justify-center">
                   <GraduationCap size={14} className="text-white" />
                 </div>
                 <div className="text-[13px] font-bold text-white">Career Centre</div>
-              </div>
-              <button onClick={() => setOpen(false)}
+              </Link>
+              <button onClick={close} aria-label="Close navigation"
                 className="p-1.5 rounded-lg text-[var(--sidebar-text)] hover:bg-[var(--sidebar-hover)]">
                 <X size={16} />
               </button>
             </div>
-            <NavLinks />
-            <UserFooter />
+            <NavLinks items={items} pathname={pathname} onNavigate={close} />
+            <UserFooter userName={userName} userEmail={userEmail} roleStyle={roleStyle} />
           </aside>
         </>
       )}
