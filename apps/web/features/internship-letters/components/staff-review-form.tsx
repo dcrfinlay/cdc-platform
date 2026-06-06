@@ -3,19 +3,19 @@
 import { useActionState } from 'react'
 import { updateLetterStatus, type UpdateStatusState } from '@/features/internship-letters/actions/update-letter-status'
 import type { LetterStatus } from '@/lib/types/database.types'
+import { AlertCircle } from 'lucide-react'
 
-// Actions available per current status
-const NEXT_ACTIONS: Record<LetterStatus, { status: LetterStatus; label: string; style: string }[]> = {
+const NEXT_ACTIONS: Record<LetterStatus, { status: LetterStatus; label: string; bg: string; color: string }[]> = {
   submitted: [
-    { status: 'under_review', label: 'Start review',  style: 'bg-[#FAEEDA] text-[#854F0B]' },
-    { status: 'rejected',     label: 'Reject',        style: 'bg-[#FAECE7] text-[#993C1D]' },
+    { status: 'under_review', label: 'Start review', bg: 'var(--amber-light)',  color: 'var(--amber)'  },
+    { status: 'rejected',     label: 'Reject',       bg: 'var(--coral-light)',  color: 'var(--coral)'  },
   ],
   under_review: [
-    { status: 'approved',  label: 'Approve',  style: 'bg-[#E1F5EE] text-[#0F6E56]' },
-    { status: 'rejected',  label: 'Reject',   style: 'bg-[#FAECE7] text-[#993C1D]' },
+    { status: 'approved', label: 'Approve', bg: 'var(--green-light)',  color: 'var(--green)'  },
+    { status: 'rejected', label: 'Reject',  bg: 'var(--coral-light)',  color: 'var(--coral)'  },
   ],
   approved: [
-    { status: 'collected', label: 'Mark as collected', style: 'bg-[#f0efe9] text-[#444]' },
+    { status: 'collected', label: 'Mark as collected', bg: '#F3F4F6', color: 'var(--text-2)' },
   ],
   rejected:  [],
   collected: [],
@@ -28,18 +28,14 @@ interface StaffReviewFormProps {
 }
 
 export function StaffReviewForm({ letterId, currentStatus, existingNotes }: StaffReviewFormProps) {
-  const [state, action, pending] = useActionState<UpdateStatusState, FormData>(
-    updateLetterStatus,
-    {}
-  )
-
+  const [state, action, pending] = useActionState<UpdateStatusState, FormData>(updateLetterStatus, {})
   const actions = NEXT_ACTIONS[currentStatus] ?? []
 
   if (actions.length === 0) {
     return (
-      <div className="text-[12.5px] text-[#888] italic">
+      <p className="text-[13px] text-[var(--muted)] italic">
         No further actions available for this letter.
-      </div>
+      </p>
     )
   }
 
@@ -48,36 +44,30 @@ export function StaffReviewForm({ letterId, currentStatus, existingNotes }: Staf
       <input type="hidden" name="letter_id" value={letterId} />
 
       {state.error && (
-        <div className="px-4 py-3 rounded-lg bg-red-50 border border-red-100 text-[12.5px] text-red-700">
+        <div className="flex gap-3 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-[13px] text-red-700">
+          <AlertCircle size={15} className="flex-shrink-0 mt-0.5" />
           {state.error}
         </div>
       )}
 
       <div>
-        <label className="block text-[12px] font-bold text-[#444] mb-1.5">
-          Staff notes (optional — visible to student on approval/rejection)
+        <label className="block text-[12px] font-semibold text-[var(--text-2)] mb-1.5">
+          Staff notes <span className="font-normal text-[var(--muted)]">(optional — shown to student on approval / rejection)</span>
         </label>
-        <textarea
-          name="staff_notes"
-          rows={3}
+        <textarea name="staff_notes" rows={3}
           defaultValue={existingNotes ?? ''}
           placeholder="Add any notes for the student…"
-          className="w-full px-3 py-2 text-[13px] border border-[#ccc] rounded-lg
-            focus:outline-none focus:border-[#185FA5] transition-colors resize-none"
+          className="w-full px-3 py-2.5 text-[13px] border border-[var(--border)] rounded-xl
+            focus:outline-none focus:border-[var(--brand)] focus:ring-4 focus:ring-blue-50
+            transition-all resize-none placeholder:text-[var(--placeholder)]"
         />
       </div>
 
       <div className="flex flex-wrap gap-3">
-        {actions.map(({ status, label, style }) => (
-          <button
-            key={status}
-            type="submit"
-            name="status"
-            value={status}
-            disabled={pending}
-            className={`px-5 py-2.5 rounded-lg text-[13px] font-bold transition-opacity
-              hover:opacity-80 disabled:opacity-50 ${style}`}
-          >
+        {actions.map(({ status, label, bg, color }) => (
+          <button key={status} type="submit" name="status" value={status} disabled={pending}
+            className="px-5 py-2.5 rounded-xl text-[13px] font-bold transition-all hover:opacity-80 disabled:opacity-50 active:scale-[0.98]"
+            style={{ background: bg, color }}>
             {pending ? '…' : label}
           </button>
         ))}

@@ -1,17 +1,18 @@
 import Link from 'next/link'
 import type { JobType, ApplicationStatus } from '@/lib/types/database.types'
+import { MapPin, Globe, Banknote, CalendarDays, Bookmark } from 'lucide-react'
 
 const TYPE_STYLE: Record<JobType, { bg: string; color: string; label: string }> = {
-  job:        { bg: '#E6F1FB', color: '#185FA5', label: 'Job'        },
-  internship: { bg: '#E1F5EE', color: '#0F6E56', label: 'Internship' },
+  job:        { bg: 'var(--brand-light)',  color: 'var(--brand)',  label: 'Job'        },
+  internship: { bg: 'var(--green-light)',  color: 'var(--green)',  label: 'Internship' },
 }
 
-const APP_STATUS: Record<ApplicationStatus, { label: string; color: string }> = {
-  submitted:   { label: 'Applied',      color: '#185FA5' },
-  reviewed:    { label: 'Under review', color: '#854F0B' },
-  shortlisted: { label: 'Shortlisted',  color: '#0F6E56' },
-  rejected:    { label: 'Not selected', color: '#993C1D' },
-  hired:       { label: 'Offer made',   color: '#0F6E56' },
+const APP_STATUS: Record<ApplicationStatus, { label: string; bg: string; color: string }> = {
+  submitted:   { label: 'Applied',       bg: 'var(--brand-light)',  color: 'var(--brand)'  },
+  reviewed:    { label: 'Under review',  bg: 'var(--amber-light)',  color: 'var(--amber)'  },
+  shortlisted: { label: 'Shortlisted',   bg: 'var(--green-light)',  color: 'var(--green)'  },
+  rejected:    { label: 'Not selected',  bg: 'var(--coral-light)',  color: 'var(--coral)'  },
+  hired:       { label: 'Offer made 🎉', bg: 'var(--green-light)',  color: 'var(--green)'  },
 }
 
 interface JobCardProps {
@@ -36,45 +37,55 @@ export function JobCard({
   const isExpired = deadline ? new Date(deadline) < new Date() : false
 
   return (
-    <Link
-      href={href}
-      className="block bg-white border border-[#e5e4df] rounded-xl p-5
-        hover:border-[#aaa] transition-colors group"
-    >
-      <div className="flex items-start justify-between gap-3 mb-3">
-        <span
-          className="text-[10px] font-bold px-2.5 py-1 rounded-full flex-shrink-0"
-          style={{ background: bg, color }}
-        >
+    <Link href={href}
+      className="flex flex-col bg-white rounded-2xl border border-[var(--border)] p-5
+        hover:border-[var(--border-strong)] hover:shadow-[var(--shadow)] transition-all group">
+
+      {/* Top row: type badge + saved */}
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-[10px] font-bold px-2.5 py-1 rounded-full" style={{ background: bg, color }}>
           {label}
         </span>
-        {isSaved && <span className="text-[11px] text-[#888]">🔖</span>}
-      </div>
-
-      <div className="text-[14px] font-bold mb-1 group-hover:text-[#185FA5] transition-colors">
-        {title}
-      </div>
-      <div className="text-[12px] text-[#888] mb-3">{companyName}</div>
-
-      <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-[#888]">
-        {(location || is_remote) && (
-          <span>{is_remote ? '🌐 Remote' : `📍 ${location}`}</span>
-        )}
-        {salary_range && <span>💰 {salary_range}</span>}
-        {deadline && (
-          <span className={isExpired ? 'text-[#993C1D]' : ''}>
-            📅 {isExpired ? 'Expired' : `Closes ${fmtDate(deadline)}`}
-          </span>
+        {isSaved && (
+          <Bookmark size={13} className="text-[var(--muted)]" fill="currentColor" />
         )}
       </div>
 
+      {/* Title + company */}
+      <div className="flex-1">
+        <div className="text-[14px] font-bold mb-1 group-hover:text-[var(--brand)] transition-colors leading-snug">
+          {title}
+        </div>
+        <div className="text-[12px] text-[var(--muted)] mb-3">{companyName}</div>
+
+        {/* Meta */}
+        <div className="flex flex-wrap gap-x-3 gap-y-1">
+          {(location || is_remote) && (
+            <div className="flex items-center gap-1 text-[11px] text-[var(--muted)]">
+              {is_remote ? <Globe size={11} /> : <MapPin size={11} />}
+              {is_remote ? 'Remote' : location}
+            </div>
+          )}
+          {salary_range && (
+            <div className="flex items-center gap-1 text-[11px] text-[var(--muted)]">
+              <Banknote size={11} /> {salary_range}
+            </div>
+          )}
+          {deadline && (
+            <div className={`flex items-center gap-1 text-[11px] ${isExpired ? 'text-[var(--coral)]' : 'text-[var(--muted)]'}`}>
+              <CalendarDays size={11} />
+              {isExpired ? 'Expired' : `Closes ${fmtDate(deadline)}`}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Application status */}
       {applicationStatus && (
-        <div className="mt-3 pt-3 border-t border-[#e5e4df]">
-          <span
-            className="text-[11px] font-semibold"
-            style={{ color: APP_STATUS[applicationStatus].color }}
-          >
-            ● {APP_STATUS[applicationStatus].label}
+        <div className="mt-3 pt-3 border-t border-[var(--border)]">
+          <span className="text-[11px] font-bold px-2.5 py-1 rounded-full"
+            style={{ background: APP_STATUS[applicationStatus].bg, color: APP_STATUS[applicationStatus].color }}>
+            {APP_STATUS[applicationStatus].label}
           </span>
         </div>
       )}

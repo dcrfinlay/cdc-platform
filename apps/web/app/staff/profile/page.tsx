@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useState } from 'react'
 import { updateStudentProfile, type UpdateProfileState } from '@/features/profile/actions/update-profile'
 import { createClient } from '@/lib/supabase/client'
+import { ProfileSkeleton } from '@/components/profile-skeleton'
 
 export default function StaffProfilePage() {
   const [state, action, pending] = useActionState<UpdateProfileState, FormData>(updateStudentProfile, {})
@@ -19,13 +20,7 @@ export default function StaffProfilePage() {
     })
   }, [])
 
-  if (!profile) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--surface)' }}>
-        <p className="text-[13px] text-[var(--muted)]">Loading…</p>
-      </div>
-    )
-  }
+  if (!profile) return <ProfileSkeleton />
 
   return (
     <div className="p-6 lg:p-10 max-w-xl mx-auto">

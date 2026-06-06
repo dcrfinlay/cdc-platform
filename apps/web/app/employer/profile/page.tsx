@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useState } from 'react'
 import { updateEmployerProfile, type UpdateProfileState } from '@/features/profile/actions/update-profile'
 import { createClient } from '@/lib/supabase/client'
+import { ProfileSkeleton } from '@/components/profile-skeleton'
 
 const INDUSTRIES = ['Technology & IT', 'Banking & Finance', 'Consulting', 'FMCG / Retail',
   'Manufacturing', 'Healthcare', 'Law', 'Media & Marketing', 'Public sector / NGO', 'Other']
@@ -27,13 +28,7 @@ export default function EmployerProfilePage() {
     })
   }, [])
 
-  if (!data) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
-        <p className="text-[13px] text-[var(--muted)]">Loading…</p>
-      </div>
-    )
-  }
+  if (!data) return <ProfileSkeleton />
 
   return (
     <div className="p-6 lg:p-10 max-w-xl mx-auto">

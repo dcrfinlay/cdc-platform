@@ -4,6 +4,7 @@ import { useActionState, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { updateStudentProfile, type UpdateProfileState } from '@/features/profile/actions/update-profile'
 import { createClient } from '@/lib/supabase/client'
+import { ProfileSkeleton } from '@/components/profile-skeleton'
 
 const FACULTIES = ['Economics', 'Law', 'Engineering', 'Business', 'IT', 'Medicine', 'Other']
 const YEARS     = ['1st year', '2nd year', '3rd year', '4th year', 'Masters', 'PhD']
@@ -43,11 +44,7 @@ export default function StudentProfilePage() {
   }
 
   if (!profile) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--surface)' }}>
-        <p className="text-[13px] text-[#888]">Loading…</p>
-      </div>
-    )
+    return <ProfileSkeleton />
   }
 
   return (
