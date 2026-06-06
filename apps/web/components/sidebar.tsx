@@ -1,7 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import Image from 'next/image'
+import { usePathname } from 'next/navigation'
 import { useState, useEffect, useCallback } from 'react'
 import { signOut } from '@/features/auth/actions/sign-out'
 import {
@@ -122,16 +123,16 @@ function UserFooter({ userName, userEmail, roleStyle }: {
 
 function SidebarLogo({ dashHref }: { dashHref: string }) {
   return (
-    <div className="px-4 py-5 border-b border-white/10">
-      {/* Logo links to role dashboard — standard UX pattern */}
-      <Link href={dashHref} className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-        <div className="w-8 h-8 rounded-lg bg-[var(--brand)] flex items-center justify-center flex-shrink-0">
-          <GraduationCap size={16} className="text-white" />
-        </div>
-        <div>
-          <div className="text-[13px] font-bold text-white leading-tight">Career Centre</div>
-          <div className="text-[10px] text-[var(--sidebar-muted)]">BMU Portal</div>
-        </div>
+    <div className="px-4 py-4 border-b border-white/10">
+      <Link href={dashHref} className="block hover:opacity-85 transition-opacity">
+        <Image
+          src="/cdc-logo.png"
+          alt="Career Development Centre — British Management University"
+          width={180}
+          height={56}
+          className="h-10 w-auto"
+          priority
+        />
       </Link>
     </div>
   )
@@ -170,13 +171,10 @@ export function Sidebar({ items, userName, userEmail, role }: SidebarProps) {
       </aside>
 
       {/* ── Mobile top bar ──────────────────────────────────── */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3 border-b border-white/10"
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-2.5 border-b border-white/10"
         style={{ background: 'var(--sidebar-bg)' }}>
-        <Link href={roleStyle.dashHref} className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-[var(--brand)] flex items-center justify-center">
-            <GraduationCap size={14} className="text-white" />
-          </div>
-          <div className="text-[13px] font-bold text-white">Career Centre</div>
+        <Link href={roleStyle.dashHref} className="hover:opacity-85 transition-opacity">
+          <Image src="/cdc-logo.png" alt="Career Development Centre — BMU" width={140} height={44} className="h-8 w-auto" />
         </Link>
         <button onClick={() => setOpen(true)} aria-label="Open navigation"
           className="p-2 rounded-lg text-[var(--sidebar-text)] hover:bg-[var(--sidebar-hover)] hover:text-white transition-all">
@@ -197,11 +195,8 @@ export function Sidebar({ items, userName, userEmail, role }: SidebarProps) {
             className="lg:hidden fixed left-0 top-0 h-screen w-72 z-50 flex flex-col animate-fade-in"
             style={{ background: 'var(--sidebar-bg)' }}>
             <div className="flex items-center justify-between px-4 py-4 border-b border-white/10">
-              <Link href={roleStyle.dashHref} onClick={close} className="flex items-center gap-2.5">
-                <div className="w-7 h-7 rounded-lg bg-[var(--brand)] flex items-center justify-center">
-                  <GraduationCap size={14} className="text-white" />
-                </div>
-                <div className="text-[13px] font-bold text-white">Career Centre</div>
+              <Link href={roleStyle.dashHref} onClick={close} className="hover:opacity-85 transition-opacity">
+                <Image src="/cdc-logo.png" alt="Career Development Centre — BMU" width={140} height={44} className="h-8 w-auto" />
               </Link>
               <button onClick={close} aria-label="Close navigation"
                 className="p-1.5 rounded-lg text-[var(--sidebar-text)] hover:bg-[var(--sidebar-hover)]">

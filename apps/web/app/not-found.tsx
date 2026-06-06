@@ -1,23 +1,22 @@
 import Link from 'next/link'
-import { GraduationCap, ArrowLeft } from 'lucide-react'
+import Image from 'next/image'
+import { ArrowLeft } from 'lucide-react'
 
 export default function NotFound() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6"
       style={{ background: 'var(--bg)' }}>
 
-      {/* Logo */}
-      <div className="flex items-center gap-2.5 mb-12">
-        <div className="w-9 h-9 rounded-xl bg-[var(--brand)] flex items-center justify-center">
-          <GraduationCap size={18} className="text-white" />
-        </div>
-        <div>
-          <div className="text-[13px] font-bold">Career Centre</div>
-          <div className="text-[10px] text-[var(--muted)]">British Management University</div>
-        </div>
+      <div className="mb-12">
+        <Image
+          src="/cdc-logo.png"
+          alt="Career Development Centre — British Management University"
+          width={220}
+          height={68}
+          className="h-12 w-auto opacity-80"
+        />
       </div>
 
-      {/* 404 */}
       <div className="text-[96px] font-bold leading-none tracking-tight mb-2"
         style={{ color: 'var(--border-strong)' }}>
         404

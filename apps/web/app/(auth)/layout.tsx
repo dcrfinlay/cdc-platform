@@ -1,4 +1,5 @@
-import { GraduationCap, CheckCircle2 } from 'lucide-react'
+import Image from 'next/image'
+import { CheckCircle2 } from 'lucide-react'
 
 const FEATURES = [
   'Browse hundreds of jobs & internships',
@@ -23,14 +24,15 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           }} />
 
         {/* Logo */}
-        <div className="relative flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
-            <GraduationCap size={22} className="text-white" />
-          </div>
-          <div>
-            <div className="text-white font-bold text-lg leading-tight">Career Centre</div>
-            <div className="text-blue-200 text-xs">British Management University</div>
-          </div>
+        <div className="relative">
+          <Image
+            src="/cdc-logo.png"
+            alt="Career Development Centre — British Management University"
+            width={220}
+            height={68}
+            className="h-12 w-auto brightness-0 invert"
+            priority
+          />
         </div>
 
         {/* Main copy */}
@@ -61,14 +63,15 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div className="flex-1 flex items-center justify-center p-6 bg-white min-h-screen">
         <div className="w-full max-w-[400px] animate-fade-in">
           {/* Mobile logo */}
-          <div className="lg:hidden flex items-center gap-2.5 mb-8">
-            <div className="w-8 h-8 rounded-lg bg-[var(--brand)] flex items-center justify-center">
-              <GraduationCap size={16} className="text-white" />
-            </div>
-            <div>
-              <div className="text-[13px] font-bold leading-tight">Career Centre</div>
-              <div className="text-[10px] text-[var(--muted)]">British Management University</div>
-            </div>
+          <div className="lg:hidden mb-8">
+            <Image
+              src="/cdc-logo.png"
+              alt="Career Development Centre — British Management University"
+              width={200}
+              height={62}
+              className="h-10 w-auto"
+              priority
+            />
           </div>
           {children}
         </div>

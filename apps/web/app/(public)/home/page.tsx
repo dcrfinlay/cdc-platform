@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import Image from 'next/image'
 import { GraduationCap, CalendarDays, Briefcase, FileText, BookOpen, Users, ArrowRight, MapPin, Globe } from 'lucide-react'
 
 const EVENT_TYPE_COLORS: Record<string, { bg: string; color: string; label: string }> = {
@@ -44,15 +45,9 @@ export default async function HomePage() {
       {/* ── Nav ────────────────────────────────────────────────── */}
       <nav className="sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-[var(--border)]">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[var(--brand)] flex items-center justify-center">
-              <GraduationCap size={16} className="text-white" />
-            </div>
-            <div>
-              <div className="text-[13px] font-bold leading-tight">Career Centre</div>
-              <div className="text-[10px] text-[var(--muted)]">British Management University</div>
-            </div>
-          </div>
+          <Link href="/home">
+            <Image src="/cdc-logo.png" alt="Career Development Centre — BMU" width={180} height={56} className="h-9 w-auto" priority />
+          </Link>
           <div className="flex items-center gap-3">
             <Link href="/login"
               className="px-4 py-2 rounded-xl text-[13px] font-semibold text-[var(--text)]
@@ -234,12 +229,7 @@ export default async function HomePage() {
       {/* ── Footer ─────────────────────────────────────────────── */}
       <footer className="border-t border-[var(--border)] bg-white">
         <div className="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-[var(--brand)] flex items-center justify-center">
-              <GraduationCap size={14} className="text-white" />
-            </div>
-            <div className="text-[12px] text-[var(--muted)]">Career Development Centre · British Management University</div>
-          </div>
+          <Image src="/cdc-logo.png" alt="Career Development Centre — BMU" width={140} height={44} className="h-7 w-auto opacity-70" />
           <p className="text-[11px] text-[var(--subtle)]">
             © {new Date().getFullYear()} British Management University
           </p>
