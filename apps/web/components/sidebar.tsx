@@ -130,7 +130,7 @@ function SidebarLogo({ dashHref }: { dashHref: string }) {
           alt="Career Development Centre — British Management University"
           width={180}
           height={56}
-          className="h-10 w-auto"
+          className="h-10 w-auto brightness-0 invert"
           priority
         />
       </Link>
@@ -174,7 +174,7 @@ export function Sidebar({ items, userName, userEmail, role }: SidebarProps) {
       <header className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-2.5 border-b border-white/10"
         style={{ background: 'var(--sidebar-bg)' }}>
         <Link href={roleStyle.dashHref} className="hover:opacity-85 transition-opacity">
-          <Image src="/cdc-logo.png" alt="Career Development Centre — BMU" width={140} height={44} className="h-8 w-auto" />
+          <Image src="/cdc-logo.png" alt="Career Development Centre — BMU" width={140} height={44} className="h-8 w-auto brightness-0 invert" />
         </Link>
         <button onClick={() => setOpen(true)} aria-label="Open navigation"
           className="p-2 rounded-lg text-[var(--sidebar-text)] hover:bg-[var(--sidebar-hover)] hover:text-white transition-all">
@@ -196,7 +196,7 @@ export function Sidebar({ items, userName, userEmail, role }: SidebarProps) {
             style={{ background: 'var(--sidebar-bg)' }}>
             <div className="flex items-center justify-between px-4 py-4 border-b border-white/10">
               <Link href={roleStyle.dashHref} onClick={close} className="hover:opacity-85 transition-opacity">
-                <Image src="/cdc-logo.png" alt="Career Development Centre — BMU" width={140} height={44} className="h-8 w-auto" />
+                <Image src="/cdc-logo.png" alt="Career Development Centre — BMU" width={140} height={44} className="h-8 w-auto brightness-0 invert" />
               </Link>
               <button onClick={close} aria-label="Close navigation"
                 className="p-1.5 rounded-lg text-[var(--sidebar-text)] hover:bg-[var(--sidebar-hover)]">
