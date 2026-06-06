@@ -1,9 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
-import { NavLogo } from '@/components/nav-logo'
-import { signOut } from '@/features/auth/actions/sign-out'
 
 export default async function OutcomesPage() {
   const supabase = await createClient()
@@ -94,27 +91,11 @@ export default async function OutcomesPage() {
   const topEmployers = Object.values(empMap).sort((a, b) => b.count - a.count).slice(0, 5)
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--surface)' }}>
-      <nav className="bg-white border-b border-[#e5e4df] px-7 py-3 flex items-center justify-between">
-        <NavLogo />
-        <div className="flex items-center gap-4">
-          <Link href="/admin/dashboard" className="text-[12.5px] text-[#666] hover:text-[#185FA5]">Dashboard</Link>
-          <form action={signOut}>
-            <button type="submit" className="text-[12px] text-[#185FA5] hover:underline">Sign out</button>
-          </form>
-        </div>
-      </nav>
-
-      <div className="max-w-5xl mx-auto px-6 py-10">
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-[12.5px] text-[#888] mb-6">
-          <Link href="/admin/dashboard" className="hover:text-[#185FA5]">Dashboard</Link>
-          <span>/</span>
-          <span className="text-[#1a1a18]">Graduate outcomes</span>
-        </div>
-
-        <h1 className="text-[22px] font-bold mb-2">Graduate outcomes</h1>
-        <p className="text-[13px] text-[#666] mb-8">Placement and application stats across all cohorts.</p>
+    <div className="p-6 lg:p-10 max-w-5xl mx-auto">
+      <div className="mb-8">
+        <h1 className="text-[24px] font-bold tracking-tight">Graduate outcomes</h1>
+        <p className="text-[13px] text-[var(--muted)] mt-1">Placement and application stats across all cohorts.</p>
+      </div>
 
         {/* KPI row */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
@@ -231,7 +212,6 @@ export default async function OutcomesPage() {
             </div>
           </div>
         )}
-      </div>
     </div>
   )
 }

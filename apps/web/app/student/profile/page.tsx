@@ -2,10 +2,8 @@
 
 import { useActionState, useEffect, useState } from 'react'
 import Link from 'next/link'
-import { NavLogo } from '@/components/nav-logo'
 import { updateStudentProfile, type UpdateProfileState } from '@/features/profile/actions/update-profile'
 import { createClient } from '@/lib/supabase/client'
-import { signOut } from '@/features/auth/actions/sign-out'
 
 const FACULTIES = ['Economics', 'Law', 'Engineering', 'Business', 'IT', 'Medicine', 'Other']
 const YEARS     = ['1st year', '2nd year', '3rd year', '4th year', 'Masters', 'PhD']
@@ -53,20 +51,9 @@ export default function StudentProfilePage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--surface)' }}>
-      <nav className="bg-white border-b border-[#e5e4df] px-7 py-3 flex items-center justify-between">
-        <NavLogo />
-        <div className="flex items-center gap-4">
-          <Link href="/student/dashboard" className="text-[12.5px] text-[#666] hover:text-[#185FA5]">Dashboard</Link>
-          <form action={signOut}>
-            <button type="submit" className="text-[12px] text-[#185FA5] hover:underline">Sign out</button>
-          </form>
-        </div>
-      </nav>
-
-      <div className="max-w-xl mx-auto px-6 py-10">
-        <div className="flex items-center gap-2 text-[12.5px] text-[#888] mb-6">
-          <Link href="/student/dashboard" className="hover:text-[#185FA5]">Dashboard</Link>
+    <div className="p-6 lg:p-10 max-w-xl mx-auto">
+        <div className="flex items-center gap-2 text-[12.5px] text-[var(--muted)] mb-6">
+          <Link href="/student/dashboard" className="hover:text-[var(--brand)]">Dashboard</Link>
           <span>/</span>
           <span className="text-[#1a1a18]">My profile</span>
         </div>
@@ -182,12 +169,10 @@ export default function StudentProfilePage() {
           </form>
         </div>
 
-        {/* CV visibility note */}
-        <div className="mt-4 px-4 py-3 rounded-lg bg-[#FAEEDA] border border-[#f0d9b5] text-[12px] text-[#854F0B]">
+        <div className="mt-4 px-4 py-3 rounded-xl bg-[var(--amber-light)] border border-amber-200 text-[12px] text-[var(--amber)]">
           💡 To appear in employer CV search, upload your CV and enable visibility on the{' '}
           <Link href="/student/resume" className="font-bold underline">Resume page</Link>.
         </div>
-      </div>
     </div>
   )
 }
