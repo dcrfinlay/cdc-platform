@@ -1,14 +1,13 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { NavLogo } from '@/components/nav-logo'
-import { signOut } from '@/features/auth/actions/sign-out'
 import type { JobType, JobStatus } from '@/lib/types/database.types'
+import { Plus, Briefcase } from 'lucide-react'
 
 const STATUS_STYLE: Record<JobStatus, { label: string; bg: string; color: string }> = {
-  draft:     { label: 'Draft',     bg: '#f0efe9', color: '#888'    },
-  published: { label: 'Published', bg: '#E1F5EE', color: '#0F6E56' },
-  closed:    { label: 'Closed',    bg: '#FAECE7', color: '#993C1D' },
+  draft:     { label: 'Draft',     bg: '#F3F4F6',             color: 'var(--muted)'  },
+  published: { label: 'Published', bg: 'var(--green-light)',  color: 'var(--green)'  },
+  closed:    { label: 'Closed',    bg: 'var(--coral-light)',  color: 'var(--coral)'  },
 }
 
 export default async function EmployerJobsPage() {
@@ -34,74 +33,73 @@ export default async function EmployerJobsPage() {
   }, {})
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--surface)' }}>
-      <nav className="bg-white border-b border-[#e5e4df] px-7 py-3 flex items-center justify-between">
-        <NavLogo />
-        <div className="flex items-center gap-4">
-          <Link href="/employer/dashboard" className="text-[12.5px] text-[#666] hover:text-[#185FA5]">Dashboard</Link>
-          <span className="text-[12.5px] text-[#666]">{employer.company_name}</span>
-          <form action={signOut}>
-            <button type="submit" className="text-[12px] text-[#185FA5] hover:underline">Sign out</button>
-          </form>
+    <div className="p-6 lg:p-10 max-w-4xl mx-auto">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-[24px] font-bold tracking-tight">Job postings</h1>
+          <p className="text-[13px] text-[var(--muted)] mt-1">{jobs?.length ?? 0} postings</p>
         </div>
-      </nav>
+        <Link href="/employer/jobs/new"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-bold
+            text-white bg-[var(--green)] hover:opacity-90 shadow-sm transition-opacity">
+          <Plus size={15} /> Post a job
+        </Link>
+      </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-10">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-[22px] font-bold">My job postings</h1>
-            <p className="text-[13px] text-[#666] mt-1">{jobs?.length ?? 0} postings</p>
+      {!jobs || jobs.length === 0 ? (
+        <div className="bg-white rounded-2xl border border-[var(--border)] p-14 text-center">
+          <div className="w-14 h-14 rounded-2xl bg-[var(--green-light)] flex items-center justify-center mx-auto mb-4">
+            <Briefcase size={24} className="text-[var(--green)]" />
           </div>
+          <p className="text-[14px] font-semibold mb-1">No job postings yet</p>
+          <p className="text-[13px] text-[var(--muted)] mb-5">Post jobs and internships to connect with BMU students.</p>
           <Link href="/employer/jobs/new"
-            className="px-4 py-2.5 rounded-lg text-[13px] font-bold text-white bg-[#0F6E56] hover:opacity-90">
-            + Post a job
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-bold text-white bg-[var(--green)] hover:opacity-90">
+            <Plus size={14} /> Post first job
           </Link>
         </div>
-
-        {!jobs || jobs.length === 0 ? (
-          <div className="bg-white border border-[#e5e4df] rounded-xl p-10 text-center">
-            <p className="text-[13px] text-[#888] mb-4">No job postings yet.</p>
-            <Link href="/employer/jobs/new"
-              className="inline-block px-5 py-2.5 rounded-lg text-[13px] font-bold text-white bg-[#0F6E56] hover:opacity-90">
-              Post your first job
-            </Link>
-          </div>
-        ) : (
-          <div className="bg-white border border-[#e5e4df] rounded-xl overflow-hidden">
-            <table className="w-full text-[13px]">
-              <thead>
-                <tr className="border-b border-[#e5e4df] bg-[#fafaf8]">
-                  <th className="text-left px-5 py-3 text-[11px] font-bold text-[#888] uppercase tracking-wider">Title</th>
-                  <th className="text-left px-5 py-3 text-[11px] font-bold text-[#888] uppercase tracking-wider hidden sm:table-cell">Type</th>
-                  <th className="text-left px-5 py-3 text-[11px] font-bold text-[#888] uppercase tracking-wider">Applications</th>
-                  <th className="text-left px-5 py-3 text-[11px] font-bold text-[#888] uppercase tracking-wider">Status</th>
-                  <th className="px-5 py-3" />
-                </tr>
-              </thead>
-              <tbody>
-                {jobs.map((job, i) => {
-                  const { label, bg, color } = STATUS_STYLE[job.status as JobStatus]
-                  return (
-                    <tr key={job.id} className={`border-b border-[#e5e4df] last:border-0 hover:bg-[#fafaf8] ${i % 2 !== 0 ? 'bg-[#fdfdfb]' : ''}`}>
-                      <td className="px-5 py-3.5 font-semibold">{job.title}</td>
-                      <td className="px-5 py-3.5 capitalize text-[#666] hidden sm:table-cell">{job.type}</td>
-                      <td className="px-5 py-3.5 text-[12px]">{countMap[job.id] ?? 0}</td>
-                      <td className="px-5 py-3.5">
-                        <span className="text-[10px] font-bold px-2.5 py-1 rounded-full" style={{ background: bg, color }}>{label}</span>
-                      </td>
-                      <td className="px-5 py-3.5 text-right">
-                        <Link href={`/employer/jobs/${job.id}`} className="text-[12px] text-[#185FA5] font-semibold hover:underline">
-                          View →
-                        </Link>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+      ) : (
+        <div className="bg-white rounded-2xl border border-[var(--border)] overflow-hidden shadow-[var(--shadow-sm)]">
+          <table className="w-full text-[13px]">
+            <thead>
+              <tr className="border-b border-[var(--border)] bg-[var(--bg)]">
+                <th className="text-left px-5 py-3 text-[11px] font-bold text-[var(--subtle)] uppercase tracking-wider">Title</th>
+                <th className="text-left px-5 py-3 text-[11px] font-bold text-[var(--subtle)] uppercase tracking-wider hidden sm:table-cell">Type</th>
+                <th className="text-left px-5 py-3 text-[11px] font-bold text-[var(--subtle)] uppercase tracking-wider">Applications</th>
+                <th className="text-left px-5 py-3 text-[11px] font-bold text-[var(--subtle)] uppercase tracking-wider">Status</th>
+                <th className="px-5 py-3" />
+              </tr>
+            </thead>
+            <tbody>
+              {jobs.map((job, i) => {
+                const { label, bg, color } = STATUS_STYLE[job.status as JobStatus]
+                const appCount = countMap[job.id] ?? 0
+                return (
+                  <tr key={job.id}
+                    className={`border-b border-[var(--border)] last:border-0 hover:bg-[var(--bg)] transition-colors ${i % 2 !== 0 ? 'bg-[#FAFBFC]' : ''}`}>
+                    <td className="px-5 py-4 font-semibold text-[var(--text)]">{job.title}</td>
+                    <td className="px-5 py-4 capitalize text-[var(--muted)] hidden sm:table-cell">{job.type}</td>
+                    <td className="px-5 py-4">
+                      <span className={`text-[12px] font-semibold ${appCount > 0 ? 'text-[var(--brand)]' : 'text-[var(--muted)]'}`}>
+                        {appCount}
+                      </span>
+                    </td>
+                    <td className="px-5 py-4">
+                      <span className="text-[11px] font-bold px-2.5 py-1 rounded-full" style={{ background: bg, color }}>{label}</span>
+                    </td>
+                    <td className="px-5 py-4 text-right">
+                      <Link href={`/employer/jobs/${job.id}`}
+                        className="text-[12.5px] text-[var(--brand)] font-semibold hover:underline">
+                        View →
+                      </Link>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   )
 }
